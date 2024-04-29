@@ -76,7 +76,7 @@ export class AppLogger {
     this.logger.info(`[${this.name}]:::: ${message}`)
   }
 
-  error(message: string) {
+  error(message: string | unknown) {
     this.logger.error(`[${this.name}]:::: ${message}`)
   }
 

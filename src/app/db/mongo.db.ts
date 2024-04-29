@@ -1,9 +1,9 @@
-import log4js, { Logger } from 'log4js'
 import mongoose, { Mongoose } from 'mongoose'
 import { EnvConfig } from '../../config/env.config'
+import { AppLogger } from '../../config/log.config'
 
 export class MongoSetup {
-  private readonly log: Logger = log4js.getLogger(MongoSetup.name)
+  log = new AppLogger('MongoSetup')
 
   async connect(): Promise<Mongoose | undefined> {
     try {
