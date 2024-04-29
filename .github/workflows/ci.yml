@@ -22,5 +22,6 @@ jobs:
 
       - name: Install - Build - Test
         run: |
+          npm i -g pnpm
           pnpm i
           pnpm build
