@@ -5,6 +5,7 @@ import { setupApiHandler, setupMiddlewareRouters } from './global.config'
 import ServerConfig from './server.config'
 import { json } from 'body-parser'
 import { MongoSetup } from '../app/db/mongo.db'
+import swaggerConfig from './swagger.config'
 
 const ExpressConfig = (): Application => {
   const app = express()
@@ -14,6 +15,8 @@ const ExpressConfig = (): Application => {
   app.use(helmet())
   app.use(morgan('dev'))
   app.set('trust proxy', true)
+
+  swaggerConfig(app)
 
   const routers = ServerConfig.server.urls.routers
 

@@ -35,7 +35,7 @@ const ServerConfig: Config = Object.freeze({
     urls: {
       default: '/',
       static: [],
-      routers: [{ csrf: false, path: '/', file: '../app/router/default' }]
+      routers: [{ csrf: false, path: '/api/v1', file: '../app/router/default' }]
     }
   }
 })

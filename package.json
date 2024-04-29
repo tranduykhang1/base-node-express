@@ -17,11 +17,20 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@google/generative-ai": "^0.8.0",
+    "@langchain/community": "^0.0.53",
+    "@langchain/core": "^0.1.61",
+    "@langchain/google-genai": "^0.0.12",
+    "@langchain/openai": "^0.0.28",
     "@types/body-parser": "^1.19.5",
     "body-parser": "^1.20.2",
     "express": "^4.19.2",
+    "express-jsdoc-swagger": "^1.8.0",
+    "faiss-node": "^0.5.1",
     "helmet": "^7.1.0",
+    "langchain": "^0.1.36",
     "morgan": "^1.10.0",
+    "pdf-parse": "^1.1.1",
     "winston": "^3.13.0"
   },
   "devDependencies": {

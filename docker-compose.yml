@@ -10,6 +10,8 @@ services:
       - '${PORT}:${PORT}'
     volumes:
       - .:/app
+      - ./files:/app/files
+      - ./vector-stores:/app/vector-stores
     env_file:
       - .env
     working_dir: /app

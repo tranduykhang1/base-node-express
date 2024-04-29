@@ -13,7 +13,7 @@ lint:
 docker-up:
 	docker compose up -d
 
-docker down:
+docker-down:
 	docker compose down
 
 docker-build:

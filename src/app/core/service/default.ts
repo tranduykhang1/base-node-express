@@ -1,11 +1,9 @@
-import { NextFunction, Request, Response } from 'express'
+import { ChainValues } from 'langchain/schema'
+import { CoreLangchain } from '../../langchain/core'
 
 export class DefaultService {
-  hello = async (_: Request, res: Response, next: NextFunction) => {
-    try {
-      next(res.status(200).json('HELLO'))
-    } catch (err) {
-      next(err)
-    }
+  async genAnswer(question: string): Promise<ChainValues | undefined> {
+      const coreLangChain = new CoreLangchain()
+      return await coreLangChain.createAnswer(question)
   }
 }

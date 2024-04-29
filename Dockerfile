@@ -4,6 +4,8 @@ WORKDIR /app
 
 RUN npm install -g pnpm
 
+RUN mkdir /app/files && mkdir /app/vector-stores
+
 COPY package*.json ./
 
 RUN pnpm install

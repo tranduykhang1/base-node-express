@@ -1,8 +1,21 @@
 import express from 'express'
-import { serviceDI } from '../di/service.di'
+import { controllerDI } from '../di/controller.di'
 
 const router = express.Router()
 
-router.get('/hello', serviceDI.defaultService.hello)
+/**
+ * A song
+ * @typedef {object} GenAnswerDto
+ * @property {string} question.required - The question
+ */
+
+/**
+ * POST /api/v1/gen-answer
+ * @summary Post the question in the PDF file
+ * @tags DEFAULT
+ * @param {GenAnswerDto} request.body.required - body - application/json
+ * @return {string} 200 - success response - application/json
+ */
+router.post('/gen-answer', controllerDI.defaultController.genAnswerFromPdf)
 
 exports.router = router
