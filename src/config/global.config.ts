@@ -1,15 +1,15 @@
 import { Application, NextFunction, Request, Response } from 'express'
-import log4js, { Logger } from 'log4js'
+import { AppLogger } from './log.config'
 
-const log: Logger = log4js.getLogger('App')
+const log = new AppLogger('App')
 
 const setupProcessHandlers = (): void => {
-  process.on('exit', () => log.fatal('=== Fatal Error: Application Closed ==='))
+  process.on('exit', () => log.info('=== Fatal Error: Application Closed ==='))
 
-  process.on('uncaughtException', (err: Error) => log.error('Unhandled Exception at', err))
+  process.on('uncaughtException', (err: Error) => log.error(`Unhandled Exception at::: ${err}`))
   process.on('unhandledRejection', (reason: unknown) => {
     if (!(reason instanceof Error) || reason.name !== 'FeatureNotEnabled') {
-      log.error('Unhandled Rejection at', reason)
+      log.error(`Unhandled Rejection at::: ${reason}`)
     }
   })
 }

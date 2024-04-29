@@ -6,7 +6,7 @@
     "rootDir": "./src",
     "moduleResolution": "NodeNext",
     "sourceMap": true,
-    "outDir": "./dist",
+    "outDir": "dist",
     "removeComments": true,
     "importsNotUsedAsValues": "remove",
     "isolatedModules": true,

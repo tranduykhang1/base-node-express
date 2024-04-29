@@ -1,19 +1,15 @@
-FROM node:21-slim AS build
-
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+FROM node:21-slim AS base
 
 WORKDIR /app
 
-COPY package.json pnpm-lock.yaml ./
+RUN npm install -g pnpm
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
+COPY package*.json ./
+
+RUN pnpm install
+
+FROM base AS dev
+
+COPY package*.json ./
 
 COPY . .
-
-FROM node:20-alpine AS final
-
-COPY --from=build /app/node_modules /app/node_modules
-
-EXPOSE 8080
