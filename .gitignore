@@ -2,3 +2,5 @@
 node_modules/
 dist/
 logs/*
+commitlint.config.js
+commitlint.config.js.*
