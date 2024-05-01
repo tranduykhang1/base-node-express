@@ -1,17 +1,20 @@
 FROM node:21-slim AS base
-
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
 WORKDIR /app
 
-RUN npm install -g pnpm
+FROM base AS prod-deps
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod --frozen-lockfile
 
-RUN mkdir /app/files && mkdir /app/vector-stores
+FROM base AS build
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm prune
+RUN pnpm run build
 
-COPY package*.json ./
-
-RUN pnpm install
-
-FROM base AS dev
-
-COPY package*.json ./
-
-COPY . .
+FROM base
+COPY --from=prod-deps /app/node_modules /app/node_modules
+COPY --from=build /app/dist /app/dist
+EXPOSE 8000
+CMD [ "pnpm", "start" ]

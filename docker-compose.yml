@@ -5,7 +5,7 @@ services:
     container_name: demo-api
     build:
       context: .
-      target: dev
+      target: build
     ports:
       - '${PORT}:${PORT}'
     volumes:
@@ -18,6 +18,8 @@ services:
     depends_on:
       - mongo
     command: pnpm dev
+    networks:
+      - esnet
 
   mongo:
     image: mongo:latest
@@ -30,6 +32,25 @@ services:
       - MONGO_INITDB_DATABASE
     volumes:
       - mongo-data:/data/db
+    networks:
+      - esnet
+
+  elasticsearch:
+    container_name: demo-vectorstore
+    image: elasticsearch:8.8.0
+    environment:
+      - xpack.security.enabled=false
+      - 'discovery.type=single-node'
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+    networks:
+      - esnet
 
 volumes:
   mongo-data:
+  es-data:
+
+networks:
+  esnet:

@@ -1,5 +1,5 @@
 import mongoose, { Mongoose } from 'mongoose'
-import { EnvConfig } from '../../config/env.config'
+import envConfig from '../../config/env.config'
 import { AppLogger } from '../../config/log.config'
 
 export class MongoSetup {
@@ -7,7 +7,7 @@ export class MongoSetup {
 
   async connect(): Promise<Mongoose | undefined> {
     try {
-      const conn = await mongoose.connect(EnvConfig.mongoUri)
+      const conn = await mongoose.connect(envConfig.get('mongoUri'))
       this.log.info('Connected to MongoDB')
       return conn
     } catch (err) {

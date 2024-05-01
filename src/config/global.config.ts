@@ -1,5 +1,6 @@
 import { Application, NextFunction, Request, Response } from 'express'
 import { AppLogger } from './log.config'
+import { BaseHttpError } from '../common/error/base.error'
 
 const log = new AppLogger('App')
 
@@ -28,36 +29,18 @@ const setupMiddlewareRouters = (app: Application, routes: Route[] | undefined): 
         const routeModule = require(route.file)
         app.use(route.path, routeModule.router)
         log.info(`${route.file} will be public access via ${route.path}`)
-        app.use(route.path, genericSuccessMiddleware)
+        app.use(route.path, errorHandlerMiddleware)
       })
   }
 }
 
-const setupApiHandler = (app: Application): void => {
-  app.use(genericErrorMiddleware)
-}
-
-const genericSuccessMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  if (!('status' in req) && !('answer' in req)) {
-    res.sendStatus(404)
-  } else {
-    const statusCode = req.statusCode ?? 200
-    const response = res.json || {}
-    res.status(statusCode).json(response)
-  }
+const errorHandlerMiddleware = (err: BaseHttpError, _: Request, res: Response, next: NextFunction) => {
+  console.log(res)
+  res.status(err.statusCode || 500).json({
+    message: err.message,
+    trace: err.data || {}
+  })
   next()
 }
 
-const genericErrorMiddleware = (err: any, res: Response, next: NextFunction): void => {
-  const httpStatus = err || 200
-  res.status(httpStatus).json(res.json)
-  next()
-}
-
-export {
-  genericErrorMiddleware,
-  genericSuccessMiddleware,
-  setupApiHandler,
-  setupMiddlewareRouters,
-  setupProcessHandlers
-}
+export { setupMiddlewareRouters, setupProcessHandlers, errorHandlerMiddleware }

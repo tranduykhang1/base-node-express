@@ -6,6 +6,7 @@ import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { AppLogger } from '../../config/log.config'
 
 import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai'
+import { Document } from '@langchain/core/documents'
 import path from 'path'
 
 dotenv.config()
@@ -49,5 +50,21 @@ export class PDFChatbot {
     await vectorStore.save(this.saveDirectory)
 
     this.log.info('Saved!')
+  }
+
+  public async textFromPdf(): Promise<Document<Record<string, unknown>>[]> {
+    const directoryLoader = new PDFLoader(path.join(__dirname, './files/test.pdf'))
+    const docs = await directoryLoader.load()
+
+    this.log.info('Docs loaded')
+
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: this.chunkSize,
+      chunkOverlap: this.chunkOverlap
+    })
+
+    const docOutput = await textSplitter.splitDocuments(docs)
+
+    return docOutput as Document<Record<string, unknown>>[]
   }
 }
