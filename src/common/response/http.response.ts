@@ -15,7 +15,7 @@ export default abstract class HttpResponseController {
   public send<T = unknown>(res: Response, data: HttpResponseData<T>, statusCode: number = StatusCodes.OK): void {
     res.status(statusCode).send({
       message: data?.message || 'Success',
-      data: data?.data || {},
+      data: data?.data || {}
     })
   }
 }

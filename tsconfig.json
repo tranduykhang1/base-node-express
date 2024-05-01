@@ -27,7 +27,6 @@
     "skipLibCheck": true,
     "typeRoots": ["./src/@types"],
     "experimentalDecorators": true
-
   },
   "exclude": ["node_modules", "commitlint.config.ts"]
 }

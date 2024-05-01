@@ -15,7 +15,6 @@ class ControllerDI {
   get defaultController(): DefaultController {
     const controllerKey = DefaultController.name
     if (!this.controllerMap.has(controllerKey)) {
-
       const defaultController = new DefaultController()
       this.controllerMap.set(controllerKey, defaultController)
     }

@@ -1,4 +1,4 @@
 export interface HttpResponseData<T> {
-        data:  T,
-        message: string
+  data: T
+  message: string
 }

@@ -7,16 +7,15 @@ import { serviceDI } from '../di/service.di'
 import { GenerateAnswerDto } from '../dto/default.dto'
 
 export class DefaultController extends HttpResponseController {
-
   constructor() {
     super()
   }
   async genAnswerFromPdf(req: Request<{ question: string }>, res: Response, next: NextFunction) {
     try {
-     const dto: GenerateAnswerDto = new GenerateAnswerDto() 
+      const dto: GenerateAnswerDto = new GenerateAnswerDto()
 
       dto.question = req.body.question
-      
+
       await new BaseValidator<GenerateAnswerDto>().validate(dto, next)
 
       const answer = await serviceDI.defaultService.genAnswer(req.body.question)
