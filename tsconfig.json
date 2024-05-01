@@ -2,9 +2,9 @@
   "compilerOptions": {
     "pretty": true,
     "target": "es2020",
-    "module": "NodeNext",
+    "module": "Node16",
     "rootDir": "./src",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Node16",
     "sourceMap": true,
     "outDir": "dist",
     "removeComments": true,
@@ -25,7 +25,9 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "typeRoots": ["./src/@types"]
+    "typeRoots": ["./src/@types"],
+    "experimentalDecorators": true
+
   },
   "exclude": ["node_modules", "commitlint.config.ts"]
 }

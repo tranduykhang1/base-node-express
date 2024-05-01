@@ -1,6 +1,4 @@
 import { DefaultController } from '../controller/default.controller'
-import { DefaultService } from '../core/service/default.service'
-import { serviceDI } from './service.di'
 
 /**
  * ControllerDI serves as the dependency injection container for controllers.
@@ -17,9 +15,8 @@ class ControllerDI {
   get defaultController(): DefaultController {
     const controllerKey = DefaultController.name
     if (!this.controllerMap.has(controllerKey)) {
-      const defaultService: DefaultService = serviceDI.defaultService
 
-      const defaultController = new DefaultController(defaultService)
+      const defaultController = new DefaultController()
       this.controllerMap.set(controllerKey, defaultController)
     }
     return this.controllerMap.get(controllerKey) as DefaultController

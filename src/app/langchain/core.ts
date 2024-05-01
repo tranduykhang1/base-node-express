@@ -45,7 +45,7 @@ export class CoreLangchain {
         input_documents: result,
         question
       })
-      return answer
+      return answer.text
     } catch (error) {
       this.log.error(error)
       return

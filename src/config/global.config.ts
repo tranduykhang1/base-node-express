@@ -35,10 +35,9 @@ const setupMiddlewareRouters = (app: Application, routes: Route[] | undefined): 
 }
 
 const errorHandlerMiddleware = (err: BaseHttpError, _: Request, res: Response, next: NextFunction) => {
-  console.log(res)
   res.status(err.statusCode || 500).json({
     message: err.message,
-    trace: err.data || {}
+    trace: err?.data || err?.message || {}
   })
   next()
 }
