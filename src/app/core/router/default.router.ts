@@ -1,5 +1,5 @@
 import express from 'express'
-import { controllerDI } from '../di/controller.di'
+import { controllerDI } from '../../di/controller.di'
 
 const router = express.Router()
 

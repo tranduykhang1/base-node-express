@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { BaseHttpError } from '../../common/error/base.error'
-import { BaseValidator } from '../../common/error/validator.error'
-import HttpResponseController from '../../common/response/http.response'
-import { serviceDI } from '../di/service.di'
+import { BaseHttpError } from '../../../common/error/base.error'
+import { BaseValidator } from '../../../common/error/validator.error'
+import HttpResponseController from '../../../common/response/http.response'
 import { GenerateAnswerDto } from '../dto/default.dto'
+import { serviceDI } from '../../di/service.di'
 
 export class DefaultController extends HttpResponseController {
   constructor() {

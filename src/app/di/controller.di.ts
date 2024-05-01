@@ -1,4 +1,4 @@
-import { DefaultController } from '../controller/default.controller'
+import { DefaultController } from '../core/controller/default.controller'
 
 /**
  * ControllerDI serves as the dependency injection container for controllers.

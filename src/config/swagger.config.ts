@@ -5,7 +5,7 @@ import * as expressJSDocSwagger from 'express-jsdoc-swagger'
 const options = {
   info: {
     version: '1.0.0',
-    title: 'Albums store',
+    title: 'DEMO',
     license: {
       name: 'MIT'
     }
