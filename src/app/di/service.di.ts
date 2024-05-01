@@ -1,4 +1,4 @@
-import { DefaultService } from '../core/service/default'
+import { DefaultService } from '../core/service/default.service'
 
 /**
  * ServiceDI serves as the dependency injection container for services.

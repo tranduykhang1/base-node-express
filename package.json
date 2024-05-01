@@ -35,6 +35,17 @@
     "pdf-parse": "^1.1.1",
     "winston": "^3.13.0"
   },
+  "resolutions": {
+    "@langchain/core": "0.1.61"
+  },
+  "overrides": {
+    "@langchain/core": "0.1.61"
+  },
+  "pnpm": {
+    "overrides": {
+      "@langchain/core": "0.1.61"
+    }
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.3.0",
     "@commitlint/config-conventional": "^19.2.2",

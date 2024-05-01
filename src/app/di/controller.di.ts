@@ -1,5 +1,5 @@
 import { DefaultController } from '../controller/default.controller'
-import { DefaultService } from '../core/service/default'
+import { DefaultService } from '../core/service/default.service'
 import { serviceDI } from './service.di'
 
 /**

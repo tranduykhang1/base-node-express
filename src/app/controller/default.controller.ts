@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { BaseHttpError } from '../../common/error/base.error'
 import HttpResponseController from '../../common/response/http.response'
-import { DefaultService } from '../core/service/default'
+import { DefaultService } from '../core/service/default.service'
 
 export class DefaultController extends HttpResponseController {
   //   private readonly defaultService: DefaultService

@@ -1,15 +1,12 @@
 import { TaskType } from '@google/generative-ai'
 import { FaissStore } from '@langchain/community/vectorstores/faiss'
-import * as dotenv from 'dotenv'
 import { PDFLoader } from 'langchain/document_loaders/fs/pdf'
 import { RecursiveCharacterTextSplitter } from 'langchain/text_splitter'
 import { AppLogger } from '../../config/log.config'
 
-import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai'
 import { Document } from '@langchain/core/documents'
+import { GoogleGenerativeAIEmbeddings } from '@langchain/google-genai'
 import path from 'path'
-
-dotenv.config()
 
 export class PDFChatbot {
   private saveDirectory: string

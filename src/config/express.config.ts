@@ -2,7 +2,6 @@ import { json } from 'body-parser'
 import express, { Application } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import { MongoSetup } from '../app/db/mongo.db'
 import { setupMiddlewareRouters } from './global.config'
 import ServerConfig from './server.config'
 import swaggerConfig from './swagger.config'
@@ -22,7 +21,7 @@ const ExpressConfig = (): Application => {
 
   setupMiddlewareRouters(app, routers)
 
-  new MongoSetup().connect()
+  // new MongoSetup().connect()
 
   return app
 }
