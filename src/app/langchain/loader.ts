@@ -21,7 +21,7 @@ export class PDFChatbot {
   }
 
   public async ingestDocs(): Promise<void> {
-    const directoryLoader = new PDFLoader(path.join(__dirname, './files/c-handbook.pdf'))
+    const directoryLoader = new PDFLoader(path.join(__dirname, './files/vietnam.pdf'))
     const docs = await directoryLoader.load()
 
     this.log.info('Docs loaded')

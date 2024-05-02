@@ -17,7 +17,7 @@ const options = {
     }
   },
   baseDir: __dirname,
-  filesPattern: '../app/router/*.ts',
+  filesPattern: '../app/core/router/*.ts',
   swaggerUIPath: '/docs',
   exposeSwaggerUI: true,
   exposeApiDocs: false,
