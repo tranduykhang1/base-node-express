@@ -5,6 +5,7 @@ import { AppLogger } from './config/log.config'
 
 dotenv.config()
 envConfig.init()
+
 const app = ExpressConfig()
 const PORT = envConfig.get('port') || 3030
 

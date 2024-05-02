@@ -4,7 +4,7 @@ import { BaseHttpError } from '../../../common/error/base.error'
 import { BaseValidator } from '../../../common/error/validator.error'
 import HttpResponseController from '../../../common/response/http.response'
 import { GenerateAnswerDto } from '../dto/default.dto'
-import { serviceDI } from '../../di/service.di'
+import { serviceContainer } from '../../container/service.container'
 
 export class DefaultController extends HttpResponseController {
   constructor() {
@@ -18,13 +18,25 @@ export class DefaultController extends HttpResponseController {
 
       await new BaseValidator<GenerateAnswerDto>().validate(dto, next)
 
-      const answer = await serviceDI.defaultService.genAnswer(req.body.question)
+      const answer = await serviceContainer.defaultService.genAnswer(req.body.question)
 
       super.send(res, {
         data: answer,
         message: 'Generated'
       })
     } catch (err: unknown) {
+      return next(new BaseHttpError(StatusCodes.INTERNAL_SERVER_ERROR, 'Something went wrong!', err))
+    }
+  }
+
+  async createHash(req: Request<{ doc_name: string }>, res: Response, next: NextFunction) {
+    try {
+      await serviceContainer.defaultService.createHash(req.body.doc_name)
+      super.send(res, {
+        data: null,
+        message: 'Successfully'
+      })
+    } catch (err) {
       return next(new BaseHttpError(StatusCodes.INTERNAL_SERVER_ERROR, 'Something went wrong!', err))
     }
   }

@@ -4,7 +4,7 @@ import { DefaultService } from '../core/service/default.service'
  * ServiceDI serves as the dependency injection container for services.
  * It provides methods to create instances of services with their dependencies injected.
  */
-class ServiceDI {
+class ServiceContainer {
   private serviceMap: Map<string, object>
 
   constructor() {
@@ -20,4 +20,4 @@ class ServiceDI {
   }
 }
 
-export const serviceDI = new ServiceDI()
+export const serviceContainer = new ServiceContainer()

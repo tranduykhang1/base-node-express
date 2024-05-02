@@ -4,7 +4,7 @@ import { DefaultController } from '../core/controller/default.controller'
  * ControllerDI serves as the dependency injection container for controllers.
  * It provides methods to create instances of controllers with their dependencies injected.
  */
-class ControllerDI {
+class ControllerContainer {
   // Map to hold controller instances
   private controllerMap: Map<string, object>
 
@@ -22,5 +22,5 @@ class ControllerDI {
   }
 }
 
-// Create and export an instance of ControllerDI
-export const controllerDI = new ControllerDI()
+// Create and export an instance of ControllerContainer
+export const controllerContainer = new ControllerContainer()
