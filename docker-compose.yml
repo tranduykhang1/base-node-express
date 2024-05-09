@@ -71,6 +71,5 @@ services:
     depends_on:
       - mongo
 
-
 volumes:
   mongo-data:

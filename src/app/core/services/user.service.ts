@@ -14,5 +14,4 @@ export class UserServices extends BaseServices<User> {
       throw new BaseHttpError(StatusCodes.CONFLICT, 'duplicate email!')
     }
   }
-
 }

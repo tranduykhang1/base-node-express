@@ -25,7 +25,7 @@ export const UserEntity = getModelForClass(User, {
   schemaOptions: {
     versionKey: false,
     toJSON: {
-      transform: (_, v) =>{
+      transform: (_, v) => {
         delete v.key
         delete v.password
         return v
