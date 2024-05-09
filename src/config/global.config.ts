@@ -1,6 +1,6 @@
 import { Application, NextFunction, Request, Response } from 'express'
 import { AppLogger } from './log.config'
-import { BaseHttpError } from '../common/error/base.error'
+import { BaseHttpError } from '../common/errors/base.error'
 
 const log = new AppLogger('App')
 

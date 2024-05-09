@@ -13,31 +13,19 @@ interface ServerConfig {
   }
 }
 
-interface Config {
-  timezone: string
-  tempFolder: string
-  server: ServerConfig
-}
+export const ServerConfig: ServerConfig = Object.freeze({
+  name: 'interview',
+  isSandbox: true,
 
-const ServerConfig: Config = Object.freeze({
-  timezone: '+08:00',
-  tempFolder: 'tmp',
-  server: {
-    name: 'interview',
-    isSandbox: true,
-
-    cors: {
-      // https://github.com/expressjs/cors#configuration-options
-      credentials: true,
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-      origin: []
-    },
-    urls: {
-      default: '/',
-      static: [],
-      routers: [{ csrf: false, path: '/api/v1', file: '../app/core/router/default.router' }]
-    }
+  cors: {
+    // https://github.com/expressjs/cors#configuration-options
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    origin: []
+  },
+  urls: {
+    default: '/',
+    static: [],
+    routers: [{ csrf: false, path: '/api/v1/auth', file: '../app/core/routers/auth.router' }]
   }
 })
-
-export default ServerConfig

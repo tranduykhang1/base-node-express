@@ -10,6 +10,7 @@ interface EnvConfigInterface {
   elsUri?: string
   contractAddress?: string
   accountSecret?: string
+  pwSecret?: string
 }
 
 class EnvConfig {
@@ -17,6 +18,7 @@ class EnvConfig {
 
   constructor() {
     this.init()
+    console.log(this.config)
   }
 
   init() {
@@ -24,13 +26,7 @@ class EnvConfig {
     this.config.apiHost = process.env.API_HOST || 'http://localhost:3030'
     this.config.mongoUri = process.env.MONGO_URI
     this.config.logLevel = process.env.LOG_LEVEL
-    this.config.vectorStoreDir = process.env.VECTOR_DB_DIR
-    this.config.fileDir = process.env.FILE_DIR
-    this.config.openApiKey = process.env.OPEN_API_KEY
-    this.config.googleApiKey = process.env.GOOGLE_API_KEY
-    this.config.elsUri = process.env.ELASTICSEARCH_URL!
-    this.config.contractAddress = process.env.CONTRACT_ADDRESS!
-    this.config.accountSecret = process.env.ACCOUNT_SECRET!
+    this.config.pwSecret = process.env.PW_SECRET
   }
 
   get(key: keyof EnvConfigInterface): string {

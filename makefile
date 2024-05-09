@@ -20,7 +20,10 @@ docker-build:
 	docker compose up -d --build
 
 docker-logs:
-	docker logs demo-api -f --tail 10000
+	docker logs demo_api -f --tail 10000
 
 docker-install:
 	docker compose exec api pnpm i
+
+mongo-init:
+	sh ./mongo-setup/setup.sh

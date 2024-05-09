@@ -10,7 +10,6 @@ export class BaseHttpError extends Error {
     this.statusCode = statusCode
     this.data = data || {}
 
-    // Capture the stack trace, excluding the constructor call from the stack trace
     Error.captureStackTrace(this, BaseHttpError)
   }
 }

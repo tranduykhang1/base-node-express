@@ -3,8 +3,9 @@ import express, { Application } from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { setupMiddlewareRouters } from './global.config'
-import ServerConfig from './server.config'
+import { ServerConfig } from './server.config'
 import swaggerConfig from './swagger.config'
+import { MongoSetup } from '../app/db/mongo.db'
 
 const ExpressConfig = (): Application => {
   const app = express()
@@ -17,11 +18,11 @@ const ExpressConfig = (): Application => {
 
   swaggerConfig(app)
 
-  const routers = ServerConfig.server.urls.routers
+  const routers = ServerConfig.urls.routers
 
   setupMiddlewareRouters(app, routers)
 
-  // new MongoSetup().connect()
+  new MongoSetup().connect()
 
   return app
 }

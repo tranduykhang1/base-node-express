@@ -1,6 +1,6 @@
 import { Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { HttpResponseData } from '../interface/response.interface'
+import { HttpResponseData } from '../interfaces/response.interface'
 
 /**
  * Base Controller

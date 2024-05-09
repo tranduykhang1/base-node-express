@@ -11,13 +11,13 @@ const options = {
     }
   },
   security: {
-    BasicAuth: {
+    BearerAuth: {
       type: 'http',
-      scheme: 'basic'
+      scheme: 'bearer'
     }
   },
   baseDir: __dirname,
-  filesPattern: '../app/core/router/*.ts',
+  filesPattern: '../app/core/routers/*.router.ts',
   swaggerUIPath: '/docs',
   exposeSwaggerUI: true,
   exposeApiDocs: false,
