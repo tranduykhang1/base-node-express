@@ -10,7 +10,7 @@ const config: Config = {
   testPathIgnorePatterns: ['/node_modules/', '/dist/'],
   moduleFileExtensions: ['js', 'json', 'ts'],
   transformIgnorePatterns: ['/node_modules/', '\\.pnp\\.[^\\/]+$'],
-  testMatch: [ "**/?(*.)+(spec|test).[jt]s?(x)" ],
+  testMatch: ['**/?(*.)+(spec|test).[jt]s?(x)']
 }
 
 export default config

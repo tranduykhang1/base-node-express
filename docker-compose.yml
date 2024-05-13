@@ -76,7 +76,7 @@ services:
     image: redis
     restart: always
     command: bash -c "redis-server --appendonly yes --requirepass $REDIS_PASSWORD"
-    ports: 
+    ports:
       - 6379:6379
     volumes:
       - redis:/data/cache
@@ -92,11 +92,9 @@ services:
       - REDIS_HOST
       - REDIS_PASSWORD
       - HTTP_USER=admin
-      - HTTP_PASSWORD=admin 
+      - HTTP_PASSWORD=admin
     ports:
       - $REDIS_PORT_GUI:8081
-
-
 
 volumes:
   mongo-data:
