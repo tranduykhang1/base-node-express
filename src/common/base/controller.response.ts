@@ -6,7 +6,7 @@ import { HttpResponseData } from '../interfaces/response.interface'
  * Base Controller
  */
 
-export default abstract class HttpResponseController {
+export default abstract class BaseController {
   /**
    * Global method to send API response
    * @param res

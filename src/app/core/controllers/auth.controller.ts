@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from 'express'
 import { BaseValidator } from '../../../common/errors/validator.error'
-import HttpResponseController from '../../../common/responses/http.response'
+import BaseController from '../../../common/base/controller.response'
 import { serviceContainers } from '../../containers/service.container'
 import { LoginDto, RegisterDto } from '../dto/auth.dto'
 
-export class AuthControllers extends HttpResponseController {
+export class AuthControllers extends BaseController {
   constructor() {
     super()
   }
@@ -34,6 +34,25 @@ export class AuthControllers extends HttpResponseController {
         data,
         message: 'success'
       })
+    } catch (err) {
+      return next(err)
+    }
+  }
+
+  async refreshToken(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = req.body._id
+
+      const user = await serviceContainers.userServices.findOne({ _id: userId })
+
+      if (user) {
+        const data = await serviceContainers.authServices.refreshToken(user)
+
+        return super.send(res, {
+          data,
+          message: 'success'
+        })
+      }
     } catch (err) {
       return next(err)
     }

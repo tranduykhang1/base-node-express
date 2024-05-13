@@ -25,9 +25,9 @@
     "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "typeRoots": ["./src/@types"],
+    "typeRoots": ["./node_modules/@types"],
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true
   },
-  "exclude": ["node_modules", "commitlint.config.ts"]
+  "exclude": ["node_modules", "commitlint.config.ts", "tests/", "jest.config.ts"]
 }

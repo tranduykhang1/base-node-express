@@ -1,4 +1,4 @@
-import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator'
+import { IsEmail, IsJWT, IsString, MaxLength, MinLength } from 'class-validator'
 
 export class RegisterDto {
   @IsString()
@@ -26,4 +26,9 @@ export class LoginDto {
 
   @IsString()
   password!: string
+}
+
+export class RefreshTokenDto {
+  @IsJWT()
+  token!: string
 }

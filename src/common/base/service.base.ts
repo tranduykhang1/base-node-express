@@ -11,7 +11,7 @@ export class BaseServices<T> {
   log: AppLogger = new AppLogger(BaseServices.name)
 
   constructor(model: Model<T>) {
-    if (envConfig.get('elsUri') !== 'test') {
+    if (envConfig.get('nodeEnv') !== 'test') {
       this.model = model
     }
 

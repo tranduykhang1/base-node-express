@@ -4,7 +4,7 @@ import envConfig from '../config/env.config'
 const algorithm = 'aes-256-cbc'
 
 const encryptionIV = createHash('sha512')
-  .update(envConfig.get('accountSecret') || 'default_pw_secret')
+  .update(envConfig.get('pwSecret') || 'default_pw_secret')
   .digest('hex')
   .substring(0, 16)
 

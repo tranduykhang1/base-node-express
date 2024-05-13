@@ -14,9 +14,8 @@ interface ServerConfig {
 }
 
 export const ServerConfig: ServerConfig = Object.freeze({
-  name: 'interview',
+  name: 'CHANGE_ME',
   isSandbox: true,
-
   cors: {
     // https://github.com/expressjs/cors#configuration-options
     credentials: true,
@@ -26,6 +25,9 @@ export const ServerConfig: ServerConfig = Object.freeze({
   urls: {
     default: '/',
     static: [],
-    routers: [{ csrf: false, path: '/api/v1/auth', file: '../app/core/routers/auth.router' }]
+    routers: [
+      { csrf: false, path: '/api/v1/auth', file: '../app/core/routers/auth.router' },
+      { csrf: false, path: '/api/v1/user', file: '../app/core/routers/user.router' }
+    ]
   }
 })

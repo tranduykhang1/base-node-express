@@ -1,4 +1,5 @@
 import { AuthControllers } from '../core/controllers/auth.controller'
+import { UserControllers } from '../core/controllers/user.controller'
 
 /**
  * ControllerDI serves as the dependency injection container for controllers.
@@ -15,10 +16,17 @@ class ControllerContainers {
   get authControllers(): AuthControllers {
     const controllerKey = AuthControllers.name
     if (!this.controllerMap.has(controllerKey)) {
-      const authControllers = new AuthControllers()
-      this.controllerMap.set(controllerKey, authControllers)
+      this.controllerMap.set(controllerKey, new AuthControllers())
     }
     return this.controllerMap.get(controllerKey) as AuthControllers
+  }
+
+  get userControllers(): UserControllers {
+    const controllerKey = UserControllers.name
+    if (!this.controllerMap.has(controllerKey)) {
+      this.controllerMap.set(controllerKey, new UserControllers())
+    }
+    return this.controllerMap.get(controllerKey) as UserControllers
   }
 }
 

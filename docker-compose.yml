@@ -71,5 +71,33 @@ services:
     depends_on:
       - mongo
 
+  redis:
+    container_name: demo_redis
+    image: redis
+    restart: always
+    command: bash -c "redis-server --appendonly yes --requirepass $REDIS_PASSWORD"
+    ports: 
+      - 6379:6379
+    volumes:
+      - redis:/data/cache
+
+  redis-gui:
+    container_name: demo_redis_gui
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST
+      - REDIS_PASSWORD
+      - HTTP_USER=admin
+      - HTTP_PASSWORD=admin 
+    ports:
+      - $REDIS_PORT_GUI:8081
+
+
+
 volumes:
   mongo-data:
+  redis:
