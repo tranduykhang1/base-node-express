@@ -12,12 +12,15 @@
     "prettier": "prettier --check .",
     "prettier:fix": "prettier --write .",
     "prepare": "husky",
-    "test": "NODE_ENV=test jest"
+    "test": "NODE_ENV=test jest",
+    "seed": "pnpm build && docker compose exec api node dist/seeders/index.js",
+    "seed:refresh": "pnpm build && docker compose exec api node dist/seeders/index.js --refresh"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@faker-js/faker": "^8.4.1",
     "@typegoose/typegoose": "^12.4.0",
     "@types/body-parser": "^1.19.5",
     "@types/jsonwebtoken": "^9.0.6",

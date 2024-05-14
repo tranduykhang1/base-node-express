@@ -29,6 +29,21 @@ export class BaseServices<T> {
     }
   }
 
+  async createMany(input: Partial<T[]>, createdBy = ''): Promise<void> {
+    try {
+      const createInput = input.map((i) => {
+        return {
+          ...i,
+          createdBy
+        }
+      })
+      await this.model.insertMany(createInput)
+      return
+    } catch (err) {
+      throw this.handleServiceError(err, 'Create many')
+    }
+  }
+
   async findOne(filter: FilterQuery<T>, throwErr = false): Promise<Nullable<T>> {
     try {
       const data = this.model.findOne(filter)
@@ -70,9 +85,10 @@ export class BaseServices<T> {
     }
   }
 
-  async delete(filter: FilterQuery<T>): Promise<Nullable<T>> {
+  async delete(filter: FilterQuery<T>): Promise<void> {
     try {
-      return (await this.model.findByIdAndDelete(filter)) ?? null
+      await this.model.deleteMany(filter)
+      return
     } catch (err) {
       throw this.handleServiceError(err, `Delete`)
     }
