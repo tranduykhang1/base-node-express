@@ -27,7 +27,7 @@ describe('UserServices', () => {
     it('should return access token and refresh token when login is successful', async () => {
       jest.spyOn(userServices, 'findOne').mockResolvedValueOnce(null)
 
-      const response =await userServices.checkDuplicateUser(faker.internet.email())
+      const response = await userServices.checkDuplicateUser(faker.internet.email())
 
       expect(response).toEqual(undefined)
     })
