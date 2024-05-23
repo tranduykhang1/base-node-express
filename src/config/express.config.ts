@@ -1,15 +1,15 @@
 import { json } from 'body-parser'
 import express, { Application } from 'express'
+import httpContext from 'express-http-context2'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import { MongoSetup } from '../app/db/mongo.db'
+import { serviceContainers } from '../app/containers/service.container'
+import { mongoSetup } from '../app/db/mongo.db'
 import { setupMiddlewareRouters } from './global.config'
 import { ServerConfig } from './server.config'
 import swaggerConfig from './swagger.config'
-import { serviceContainers } from '../app/containers/service.container'
-import httpContext from 'express-http-context2'
 
-const ExpressConfig = (): Application => {
+export const ExpressConfig = (): Application => {
   const app = express()
   app.use(express.urlencoded({ extended: true }))
   app.use(json())
@@ -28,10 +28,8 @@ const ExpressConfig = (): Application => {
 
   setupMiddlewareRouters(app, routers)
 
-  new MongoSetup().connect()
+  mongoSetup.connect()
   serviceContainers.redisServices.connect()
 
   return app
 }
-
-export default ExpressConfig

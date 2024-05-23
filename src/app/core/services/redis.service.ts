@@ -13,9 +13,10 @@ export class RedisServices {
         port: +envConfig.get('redisPort'),
         host: envConfig.get('redisHost'),
         username: 'default',
-        password: envConfig.get('redisPass')
+        password: envConfig.get('redisPass'),
+        db: +envConfig.get('redisDB')
       })
-      this.logger.info(`Connected to REDIS`)
+      this.logger.info(`Connected to REDIS DB ${envConfig.get('redisDB')}`)
     } catch (err) {
       this.logger.error(`Cannot connect to redis: ${err}`)
     }
@@ -40,6 +41,15 @@ export class RedisServices {
       return null
     } catch (err) {
       this.logger.error(`Get error: ${err}`)
+      throw err
+    }
+  }
+
+  async clear(): Promise<void> {
+    try {
+      await this.client!.flushall()
+    } catch (err) {
+      this.logger.error(`Clear error ${err}`)
       throw err
     }
   }

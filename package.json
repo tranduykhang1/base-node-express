@@ -13,6 +13,7 @@
     "prettier:fix": "prettier --write .",
     "prepare": "husky",
     "test": "NODE_ENV=test jest",
+    "test:e2e": "NODE_ENV=e2e-test jest --config ./tests/e2e-specs/e2e.config.json --forceExit --maxWorkers=1",
     "seed": "pnpm build && docker compose exec api node dist/seeders/index.js",
     "seed:refresh": "pnpm build && docker compose exec api node dist/seeders/index.js --refresh"
   },
@@ -24,6 +25,7 @@
     "@typegoose/typegoose": "^12.4.0",
     "@types/body-parser": "^1.19.5",
     "@types/jsonwebtoken": "^9.0.6",
+    "@types/supertest": "^6.0.2",
     "body-parser": "^1.20.2",
     "class-validator": "^0.14.1",
     "express": "^4.19.2",
@@ -34,8 +36,10 @@
     "http-status-codes": "^2.3.0",
     "ioredis": "^5.4.1",
     "jsonwebtoken": "^9.0.2",
+    "mongodb-memory-server": "^9.2.0",
     "morgan": "^1.10.0",
     "nanoid": "^3.3.7",
+    "supertest": "^7.0.0",
     "ts-jest": "^29.1.2",
     "winston": "^3.13.0"
   },

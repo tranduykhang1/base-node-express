@@ -9,6 +9,8 @@ interface EnvConfigInterface {
   redisPort?: string
   redisHost?: string
   redisPass?: string
+  isTestEnv?: string
+  redisDB?: string
 }
 
 class EnvConfig {
@@ -30,6 +32,8 @@ class EnvConfig {
     this.config.redisPort = process.env.REDIS_PORT
     this.config.redisHost = process.env.REDIS_HOST
     this.config.redisPass = process.env.REDIS_PASSWORD
+    this.config.isTestEnv = process.env.NODE_ENV?.includes('test').toString()
+    this.config.redisDB = process.env.REDIS_DB
   }
 
   get(key: keyof EnvConfigInterface): string {

@@ -44,10 +44,10 @@ export class AuthServices {
   async login(dto: LoginDto): Promise<Optional<LoginResponse>> {
     const user = await this.userServices.findOne({ email: dto.email })
     if (!user) {
-      throw new BaseHttpError(StatusCodes.NOT_FOUND, 'wrong credentials!')
+      throw new BaseHttpError(StatusCodes.BAD_REQUEST, 'wrong credentials!')
     }
     if (!Password.compare(user.password!, user.key!, dto.password)) {
-      throw new BaseHttpError(StatusCodes.NOT_FOUND, 'wrong credentials!')
+      throw new BaseHttpError(StatusCodes.BAD_REQUEST, 'wrong credentials!')
     }
     const [at, rt] = [this.signToken({ email: user.email, _id: user._id }), this.signToken({ _id: user._id })]
 

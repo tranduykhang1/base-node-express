@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
-import { BaseValidator } from '../../../common/errors/validator.error'
+import { StatusCodes } from 'http-status-codes'
 import BaseController from '../../../common/base/controller.response'
+import { BaseValidator } from '../../../common/errors/validator.error'
 import { serviceContainers } from '../../containers/service.container'
 import { LoginDto, RegisterDto } from '../dto/auth.dto'
 
@@ -15,10 +16,14 @@ export class AuthControllers extends BaseController {
 
       const data = await serviceContainers.authServices.register(req.body)
 
-      return super.send(res, {
-        data,
-        message: 'success'
-      })
+      return super.send(
+        res,
+        {
+          data,
+          message: 'success'
+        },
+        StatusCodes.CREATED
+      )
     } catch (err) {
       return next(err)
     }

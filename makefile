@@ -1,28 +1,25 @@
-dev:
-	pnpm run dev
-
-prod:
-	pnpm run start
-
-build:
-	pnpm run build
-
 lint:
 	pnpm run lint
 
-docker-up:
+up:
 	docker compose up -d
 
-docker-down:
+down:
 	docker compose down
 
-docker-build:
+build:
 	docker compose up -d --build
 
-docker-logs:
+api-logs:
 	docker logs demo_api -f --tail 10000
 
-docker-install:
+unit:
+	pnpm test
+
+e2e:
+	pnpm test:e2e
+
+install:
 	docker compose exec api pnpm i
 
 mongo-init:
