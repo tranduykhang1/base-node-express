@@ -5,7 +5,7 @@ import { controllerContainers } from '../../containers/controller.container'
 const router = express.Router()
 
 /**
- * GET /api/v1/user/me
+ * GET /api/v1/users/me
  * @summary Get current user
  * @tags USER
  * @return {string} 200 - success response - application/json

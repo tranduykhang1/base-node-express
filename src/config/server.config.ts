@@ -27,7 +27,7 @@ export const ServerConfig: ServerConfig = Object.freeze({
     static: [],
     routers: [
       { csrf: false, path: '/api/v1/auth', file: '../app/core/routers/auth.router' },
-      { csrf: false, path: '/api/v1/user', file: '../app/core/routers/user.router' }
+      { csrf: false, path: '/api/v1/users', file: '../app/core/routers/user.router' }
     ]
   }
 })
