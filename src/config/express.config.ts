@@ -8,6 +8,7 @@ import { mongoSetup } from '../app/db/mongo.db'
 import { setupMiddlewareRouters } from './global.config'
 import { ServerConfig } from './server.config'
 import swaggerConfig from './swagger.config'
+import cors from 'cors'
 
 export const ExpressConfig = (): Application => {
   const app = express()
@@ -19,7 +20,7 @@ export const ExpressConfig = (): Application => {
 
   app.use(httpContext.middleware)
 
-  // app.use(cors())
+  app.use(cors())
   app.set('trust proxy', true)
 
   swaggerConfig(app)

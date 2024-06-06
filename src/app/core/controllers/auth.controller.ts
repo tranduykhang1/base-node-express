@@ -12,6 +12,7 @@ export class AuthControllers extends BaseController {
 
   async register(req: Request, res: Response, next: NextFunction) {
     try {
+      console.log(req.body)
       await new BaseValidator<RegisterDto>().validate(req.body, RegisterDto, next)
 
       const data = await serviceContainers.authServices.register(req.body)
