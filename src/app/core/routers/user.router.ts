@@ -13,4 +13,13 @@ const router = express.Router()
  */
 router.get('/me', authMiddleware.isAuth, controllerContainers.userControllers.getCurrentUser)
 
+/**
+ * GET /api/v1/users
+ * @summary Get users
+ * @tags USER
+ * @return {string} 200 - success response - application/json
+ * @security BearerAuth
+ */
+router.get('/', authMiddleware.isAuth, authMiddleware.isAdmin, controllerContainers.userControllers.getAll)
+
 exports.router = router

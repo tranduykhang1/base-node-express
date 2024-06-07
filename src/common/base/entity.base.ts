@@ -1,6 +1,11 @@
-import { prop } from '@typegoose/typegoose'
+import { modelOptions, prop } from '@typegoose/typegoose'
 import { nanoid } from 'nanoid'
 
+@modelOptions({
+  schemaOptions: {
+    timestamps: true
+  }
+})
 export class BaseEntity {
   @prop({ type: String, default: nanoid() })
   _id!: string
@@ -11,6 +16,6 @@ export class BaseEntity {
   @prop({ require: false, type: Date })
   updatedAt?: Date
 
-  @prop({ require: false, type: Date })
+  @prop({ default: null })
   deletedAt?: Date
 }

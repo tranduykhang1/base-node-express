@@ -3,6 +3,7 @@ import { User } from '../app/core/entities/user.entity'
 import { Seeder } from '../common/interfaces/seeder.interface'
 import { serviceContainers } from '../app/containers/service.container'
 import { Password } from '../utils/password.util'
+import { USER_ROLE } from '../common/enums/user.enum'
 
 export class UserSeeder implements Seeder {
   async seed(): Promise<void> {
@@ -16,7 +17,8 @@ export class UserSeeder implements Seeder {
         lastName: faker.person.lastName(),
         password: encryptedData,
         key,
-        email: `john_doe_${i + 1}@gmail.com`
+        email: `john_doe_${i + 1}@gmail.com`,
+        role: i === 0 ? USER_ROLE.admin : USER_ROLE.user
       })
     }
     await serviceContainers.userServices.createMany(items)

@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes'
-import { FilterQuery, Model, PipelineStage } from 'mongoose'
+import { FilterQuery, Model } from 'mongoose'
 import envConfig from '../../config/env.config'
 import { AppLogger } from '../../config/log.config'
-import { SORT_ORDER } from '../enums/pagination.enum'
+import { SORT_BY, SORT_ORDER } from '../enums/pagination.enum'
 import { BaseHttpError } from '../errors/base.error'
 import { Nullable } from '../types/common.type'
 
@@ -94,7 +94,7 @@ export class BaseServices<T> {
     }
   }
 
-  async aggregateCount(filter: FilterQuery<T>, pipe: PipelineStage[]): Promise<number> {
+  async aggregateCount(filter: FilterQuery<T>, pipe = []): Promise<number> {
     try {
       const result = await this.model.aggregate([{ $match: filter }, ...pipe, { $count: 'count' }])
       return result.length > 0 ? result[0].count : 0
@@ -106,17 +106,17 @@ export class BaseServices<T> {
   async findAndCount<M = T>(
     filter: FilterQuery<T>,
     paginate: {
-      sortField: keyof T
-      sortOrder: SORT_ORDER
+      sortField?: keyof T
+      sortOrder?: SORT_ORDER
       offset: number
-      limit: number
+      limit: 10
     },
     /* eslint-disable  @typescript-eslint/no-explicit-any */
-    pipes: PipelineStage[] | any,
+    pipes = [] as any,
     secondSortField?: SORT_ORDER
   ): Promise<{ items: M[]; total: number }> {
     try {
-      const { sortField, sortOrder, offset, limit } = paginate
+      const { sortField = SORT_BY.createdAt, sortOrder = SORT_ORDER.DESC, offset = 0, limit = 10 } = paginate
       const sortOrderNumber = sortOrder === SORT_ORDER.DESC ? -1 : 1
       const secondSort = secondSortField || '_id'
 
@@ -126,12 +126,18 @@ export class BaseServices<T> {
           ...pipes,
           { $sort: { [sortField]: sortOrderNumber, [secondSort]: -1 } },
           { $limit: offset + limit },
-          { $skip: offset }
+          { $skip: offset },
+          {
+            $project: {
+              password: 0,
+              key: 0
+            }
+          }
         ]),
         this.aggregateCount(filter, pipes)
       ])
 
-      return { items, total }
+      return { total, items }
     } catch (err) {
       throw this.handleServiceError(err, `Query`)
     }

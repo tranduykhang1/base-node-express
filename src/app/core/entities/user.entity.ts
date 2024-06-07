@@ -1,15 +1,31 @@
-import { getModelForClass, prop } from '@typegoose/typegoose'
+import { getModelForClass, index, modelOptions, prop } from '@typegoose/typegoose'
 import { BaseEntity } from '../../../common/base/entity.base'
+import { USER_ROLE } from '../../../common/enums/user.enum'
 
+@modelOptions({
+  schemaOptions: {
+    toJSON: {
+      transform: function (_, ret) {
+        delete ret.password
+        delete ret.key
+        return ret
+      }
+    }
+  }
+})
+@index({ email: 1 })
 export class User extends BaseEntity {
   @prop({ require: true })
-  firstName!: string
+  firstName: string
 
   @prop({ require: true })
-  lastName!: string
+  lastName: string
 
   @prop({ unique: true, require: true })
-  email!: string
+  email: string
+
+  @prop({ default: USER_ROLE.user })
+  role: USER_ROLE
 
   @prop({ require: false, default: '' })
   password?: string
@@ -21,15 +37,4 @@ export class User extends BaseEntity {
   lastLogin?: Date
 }
 
-export const UserEntity = getModelForClass(User, {
-  schemaOptions: {
-    versionKey: false,
-    toJSON: {
-      transform: (_, v) => {
-        delete v.key
-        delete v.password
-        return v
-      }
-    }
-  }
-})
+export const UserEntity = getModelForClass(User)

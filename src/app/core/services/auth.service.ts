@@ -49,7 +49,10 @@ export class AuthServices {
     if (!Password.compare(user.password!, user.key!, dto.password)) {
       throw new BaseHttpError(StatusCodes.BAD_REQUEST, 'wrong credentials!')
     }
-    const [at, rt] = [this.signToken({ email: user.email, _id: user._id }), this.signToken({ _id: user._id })]
+    const [at, rt] = [
+      this.signToken({ email: user.email, role: user.role, _id: user._id }),
+      this.signToken({ _id: user._id })
+    ]
 
     await Promise.all([
       this.userServices.update({ _id: user._id }, { lastLogin: new Date() }),
