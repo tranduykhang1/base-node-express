@@ -10,7 +10,7 @@ interface EnvConfigInterface {
   redisHost?: string
   redisPass?: string
   isTestEnv?: string
-  redisDB?: string,
+  redisDB?: string
   atExp?: string
   rtExp?: string
   atSecret?: string
@@ -37,11 +37,11 @@ class EnvConfig {
     this.config.redisHost = process.env.REDIS_HOST
     this.config.redisPass = process.env.REDIS_PASSWORD
     this.config.isTestEnv = process.env.NODE_ENV?.includes('test').toString()
-    this.config.redisDB = process.env.REDIS_DB,
-    this.config.atExp = process.env.AT_EXPIRE,
-    this.config.rtExp = process.env.RT_EXPIRE,
-    this.config.atSecret = process.env.JWT_SECRET,
-    this.config.rtSecret = process.env.JWT_REFRESH_SECRET
+    ;(this.config.redisDB = process.env.REDIS_DB),
+      (this.config.atExp = process.env.AT_EXPIRE),
+      (this.config.rtExp = process.env.RT_EXPIRE),
+      (this.config.atSecret = process.env.JWT_SECRET),
+      (this.config.rtSecret = process.env.JWT_REFRESH_SECRET)
   }
 
   get(key: keyof EnvConfigInterface): string {

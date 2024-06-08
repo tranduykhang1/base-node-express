@@ -33,7 +33,7 @@ export class AuthServices {
 
   async refreshToken(user: User): Promise<LoginResponse> {
     const [at, rt] = [
-      this.signToken({ email: user.email, role: user.role, _id: user._id }, envConfig.get('atSecret')),
+      this.signToken({ email: user.email, role: user.role, _id: user._id }, envConfig.get('atExp')),
       this.signToken({ _id: user._id }, envConfig.get('rtExp'), envConfig.get('rtSecret'))
     ]
 
@@ -53,7 +53,7 @@ export class AuthServices {
       throw new BaseHttpError(StatusCodes.BAD_REQUEST, 'wrong credentials!')
     }
     const [at, rt] = [
-      this.signToken({ email: user.email, role: user.role, _id: user._id }, '10s'),
+      this.signToken({ email: user.email, role: user.role, _id: user._id }, envConfig.get('atExp')),
       this.signToken({ _id: user._id }, envConfig.get('rtExp'), envConfig.get('rtSecret'))
     ]
 
