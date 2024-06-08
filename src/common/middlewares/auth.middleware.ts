@@ -4,6 +4,7 @@ import { StatusCodes } from 'http-status-codes'
 import { serviceContainers } from '../../app/containers/service.container'
 import { RefreshTokenDto } from '../../app/core/dto/auth.dto'
 import { User } from '../../app/core/entities/user.entity'
+import envConfig from '../../config/env.config'
 import { REDIS_KEY } from '../enums/redis.enum'
 import { USER_ROLE } from '../enums/user.enum'
 import { BaseHttpError } from '../errors/base.error'
@@ -61,7 +62,10 @@ class AuthMiddleware {
     }
 
     try {
-      const decodedUser = serviceContainers.authServices.verifyToken(providedToken) as Partial<User>
+      const decodedUser = serviceContainers.authServices.verifyToken(
+        providedToken,
+        envConfig.get('rtSecret')
+      ) as Partial<User>
 
       if (decodedUser) {
         const tokens = await serviceContainers.redisServices.get<LoginResponse>(REDIS_KEY.auth + decodedUser._id!)

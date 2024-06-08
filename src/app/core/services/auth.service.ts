@@ -18,21 +18,24 @@ export class AuthServices {
     private redisServices: RedisServices
   ) {}
 
-  signToken(payload: Partial<User>, secret = envConfig.get('pwSecret')): string {
+  signToken(payload: Partial<User>, expiresIn: string, secret = envConfig.get('atSecret')): string {
     const token = jwt.sign(payload, secret, {
-      expiresIn: '60m'
+      expiresIn
     })
     return token
   }
 
-  verifyToken(token: string, secret = envConfig.get('pwSecret')): Nullable<Partial<User>> {
+  verifyToken(token: string, secret = envConfig.get('atSecret')): Nullable<Partial<User>> {
     const decodedToken = jwt.verify(token, secret) as Partial<User>
     if (decodedToken?._id) return decodedToken
     return null
   }
 
   async refreshToken(user: User): Promise<LoginResponse> {
-    const [at, rt] = [this.signToken({ email: user.email, _id: user._id }), this.signToken({ _id: user._id })]
+    const [at, rt] = [
+      this.signToken({ email: user.email, role: user.role, _id: user._id }, envConfig.get('atSecret')),
+      this.signToken({ _id: user._id }, envConfig.get('rtExp'), envConfig.get('rtSecret'))
+    ]
 
     this.redisServices.set<LoginResponse>(REDIS_KEY.auth + user._id, { at, rt }, REDIS_TTL['7d'])
     return {
@@ -50,8 +53,8 @@ export class AuthServices {
       throw new BaseHttpError(StatusCodes.BAD_REQUEST, 'wrong credentials!')
     }
     const [at, rt] = [
-      this.signToken({ email: user.email, role: user.role, _id: user._id }),
-      this.signToken({ _id: user._id })
+      this.signToken({ email: user.email, role: user.role, _id: user._id }, '10s'),
+      this.signToken({ _id: user._id }, envConfig.get('rtExp'), envConfig.get('rtSecret'))
     ]
 
     await Promise.all([
