@@ -1,29 +1,36 @@
+import { json } from 'body-parser'
 import express, { Application } from 'express'
+import httpContext from 'express-http-context2'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import { setupApiHandler, setupMiddlewareRouters } from './global.config'
-import ServerConfig from './server.config'
-import { json } from 'body-parser'
-import { MongoSetup } from '../app/db/mongo.db'
+import { serviceContainers } from '../app/containers/service.container'
+import { mongoSetup } from '../app/db/mongo.db'
+import { setupMiddlewareRouters } from './global.config'
+import { ServerConfig } from './server.config'
+import swaggerConfig from './swagger.config'
+import cors from 'cors'
 
-const ExpressConfig = (): Application => {
+export const ExpressConfig = (): Application => {
   const app = express()
   app.use(express.urlencoded({ extended: true }))
   app.use(json())
 
   app.use(helmet())
   app.use(morgan('dev'))
+
+  app.use(httpContext.middleware)
+
+  app.use(cors(ServerConfig.cors))
   app.set('trust proxy', true)
 
-  const routers = ServerConfig.server.urls.routers
+  swaggerConfig(app)
+
+  const routers = ServerConfig.urls.routers
 
   setupMiddlewareRouters(app, routers)
 
-  setupApiHandler(app)
-
-  new MongoSetup().connect()
+  mongoSetup.connect()
+  serviceContainers.redisServices.connect()
 
   return app
 }
-
-export default ExpressConfig

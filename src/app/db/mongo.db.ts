@@ -1,13 +1,23 @@
+import { MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose, { Mongoose } from 'mongoose'
-import { EnvConfig } from '../../config/env.config'
+import envConfig from '../../config/env.config'
 import { AppLogger } from '../../config/log.config'
 
-export class MongoSetup {
+class MongoSetup {
   log = new AppLogger('MongoSetup')
+  private mongoServer: MongoMemoryServer | undefined
 
   async connect(): Promise<Mongoose | undefined> {
+    if (envConfig.get('isTestEnv') === 'true') {
+      await this.connectForTesting()
+      return
+    }
+    return await this.connectForUse()
+  }
+
+  async connectForUse(): Promise<Mongoose | undefined> {
     try {
-      const conn = await mongoose.connect(EnvConfig.mongoUri)
+      const conn = await mongoose.connect(envConfig.get('mongoUri'))
       this.log.info('Connected to MongoDB')
       return conn
     } catch (err) {
@@ -15,4 +25,33 @@ export class MongoSetup {
       return
     }
   }
+
+  async connectForTesting(): Promise<void> {
+    try {
+      this.mongoServer = await MongoMemoryServer.create()
+      const mongoUri = await this.mongoServer.getUri()
+      await mongoose.connect(mongoUri)
+      this.log.info('Connected to the Testing MongoDB')
+    } catch (err) {
+      this.log.error(err)
+      return
+    }
+  }
+
+  async close(): Promise<void> {
+    await mongoose.disconnect()
+    if (this.mongoServer) {
+      await this.mongoServer!.stop()
+    }
+  }
+
+  async clear(): Promise<void> {
+    const collections = mongoose.connection.collections
+
+    for (const key in collections) {
+      await collections[key].deleteMany()
+    }
+  }
 }
+
+export const mongoSetup = new MongoSetup()

@@ -2,9 +2,9 @@
   "compilerOptions": {
     "pretty": true,
     "target": "es2020",
-    "module": "NodeNext",
+    "module": "Node16",
     "rootDir": "./src",
-    "moduleResolution": "NodeNext",
+    "moduleResolution": "Node16",
     "sourceMap": true,
     "outDir": "dist",
     "removeComments": true,
@@ -17,15 +17,17 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "strictBindCallApply": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "noImplicitThis": true,
     "alwaysStrict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true,
+    "noImplicitReturns": false,
     "noFallthroughCasesInSwitch": true,
     "skipLibCheck": true,
-    "typeRoots": ["./src/@types"]
+    "typeRoots": ["./node_modules/@types"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "commitlint.config.ts", "tests/", "jest.config.ts"]
 }

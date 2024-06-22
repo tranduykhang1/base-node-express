@@ -2,10 +2,10 @@ version: '3.9'
 
 services:
   api:
-    container_name: demo-api
+    container_name: demo_api
     build:
       context: .
-      target: dev
+      target: build
     ports:
       - '${PORT}:${PORT}'
     volumes:
@@ -16,18 +16,87 @@ services:
     depends_on:
       - mongo
     command: pnpm dev
+    restart: always
 
   mongo:
-    image: mongo:latest
-    container_name: demo-mongo
-    ports:
-      - '${MONGO_OPEN_PORT}:27017'
+    container_name: demo_mongo
+    image: mongo
+    restart: always
     environment:
       - MONGO_INITDB_ROOT_USERNAME
       - MONGO_INITDB_ROOT_PASSWORD
       - MONGO_INITDB_DATABASE
+      - MONGO_HOST
+      - MONGO_HOST_1
+      - MONGO_HOST_2
     volumes:
       - mongo-data:/data/db
+      - ./mongo-setup/rs-init.sh:/scripts/rs-init.sh
+    ports:
+      - 27019:27017
+    entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'rs0']
+
+  mongo1:
+    container_name: demo_mongo_1
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+    depends_on:
+      - mongo
+    restart: always
+    entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'rs0']
+
+  mongo2:
+    container_name: demo_mongo_2
+    image: mongo
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME
+      - MONGO_INITDB_ROOT_PASSWORD
+    depends_on:
+      - mongo
+    restart: always
+    entrypoint: ['/usr/bin/mongod', '--bind_ip_all', '--replSet', 'rs0']
+
+  admin:
+    container_name: demo_mongo_admin
+    image: mongo-express
+    restart: always
+    ports:
+      - $MONGO_ADMIN_PORT:8081
+    environment:
+      - ME_CONFIG_MONGODB_ADMINUSERNAME=$MONGO_INITDB_ROOT_USERNAME
+      - ME_CONFIG_MONGODB_ADMINPASSWORD=$MONGO_INITDB_ROOT_PASSWORD
+      - ME_CONFIG_MONGODB_URL=$MONGO_URI
+    depends_on:
+      - mongo
+
+  redis:
+    container_name: demo_redis
+    image: redis
+    restart: always
+    command: bash -c "redis-server --appendonly yes --requirepass $REDIS_PASSWORD"
+    ports:
+      - 6379:6379
+    volumes:
+      - redis:/data/cache
+
+  redis-gui:
+    container_name: demo_redis_gui
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST
+      - REDIS_PASSWORD
+      - REDIS_DB=0
+      - HTTP_USER=admin
+      - HTTP_PASSWORD=admin
+    ports:
+      - $REDIS_PORT_GUI:8081
 
 volumes:
   mongo-data:
+  redis:

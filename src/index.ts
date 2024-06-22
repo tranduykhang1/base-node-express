@@ -1,10 +1,13 @@
 import dotenv from 'dotenv'
-import { EnvConfig } from './config/env.config'
-import ExpressConfig from './config/express.config'
+import envConfig from './config/env.config'
+import { ExpressConfig } from './config/express.config'
 import { AppLogger } from './config/log.config'
 
 dotenv.config()
-const app = ExpressConfig()
-const PORT = EnvConfig.port || 3030
+envConfig.init()
 
-app.listen(PORT, () => new AppLogger('App').info('Server Running on Port:::' + PORT))
+const app = ExpressConfig()
+const PORT = envConfig.get('port') || 3030
+const server = app.listen(PORT, () => new AppLogger('App').info('Server Running on Port:::' + PORT))
+
+export { app, server }

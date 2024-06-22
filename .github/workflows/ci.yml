@@ -22,5 +22,6 @@ jobs:
 
       - name: Install - Build - Test
         run: |
-          pnpm i
+          npm i -g pnpm
+          pnpm install --no-frozen-lockfile
           pnpm build

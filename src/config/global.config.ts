@@ -1,7 +1,9 @@
 import { Application, NextFunction, Request, Response } from 'express'
+import { BaseHttpError } from '../common/errors/base.error'
 import { AppLogger } from './log.config'
+import envConfig from './env.config'
 
-const log = new AppLogger('App')
+const log = new AppLogger('Global Configuration')
 
 const setupProcessHandlers = (): void => {
   process.on('exit', () => log.info('=== Fatal Error: Application Closed ==='))
@@ -17,6 +19,7 @@ const setupProcessHandlers = (): void => {
 interface Route {
   file: string
   path: string
+  version: number
 }
 
 /* eslint-disable */
@@ -27,37 +30,26 @@ const setupMiddlewareRouters = (app: Application, routes: Route[] | undefined): 
       .forEach((route) => {
         const routeModule = require(route.file)
         app.use(route.path, routeModule.router)
-        log.info(`${route.file} will be public access via ${route.path}`)
-        app.use(route.path, genericSuccessMiddleware)
+        log.info(`ROUTE:::V${route.version}:::${route.file} will be public access via ${route.path}`)
+        app.use(route.path, errorHandlerMiddleware)
       })
   }
 }
 
-const setupApiHandler = (app: Application): void => {
-  app.use(genericErrorMiddleware)
-}
-
-const genericSuccessMiddleware = (req: Request, res: Response, next: NextFunction): void => {
-  if (!('status' in req) && !('answer' in req)) {
-    res.sendStatus(404)
-  } else {
-    const statusCode = req.statusCode ?? 200
-    const response = res.json || {}
-    res.status(statusCode).json(response)
+const errorHandlerMiddleware = (err: BaseHttpError, _: Request, res: Response, next: NextFunction) => {
+  log.error(`Error occurred at::: ${err.message}, stack: ${err.stack}`)
+  if (envConfig.get('nodeEnv') === 'dev') {
+    res.status(err.statusCode ?? 500).json({
+      message: err.message,
+      trace: err?.data ?? err?.message ?? {},
+      stack: err.stack
+    })
+    return next()
   }
-  next()
+  res.status(err.statusCode ?? 500).json({
+    message: err.message
+  })
+  return next()
 }
 
-const genericErrorMiddleware = (err: any, res: Response, next: NextFunction): void => {
-  const httpStatus = err || 200
-  res.status(httpStatus).json(res.json)
-  next()
-}
-
-export {
-  genericErrorMiddleware,
-  genericSuccessMiddleware,
-  setupApiHandler,
-  setupMiddlewareRouters,
-  setupProcessHandlers
-}
+export { errorHandlerMiddleware, setupMiddlewareRouters, setupProcessHandlers }

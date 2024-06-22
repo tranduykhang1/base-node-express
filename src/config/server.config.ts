@@ -4,40 +4,30 @@ interface ServerConfig {
   cors: {
     credentials: boolean
     methods: string[]
-    origin: string[]
+    origin: string
   }
   urls: {
     default: string // "/" will be redirected to this path
     static: string[]
-    routers: { csrf: boolean; path: string; file: string }[]
+    routers: { csrf: boolean; path: string; file: string; version: number }[]
   }
 }
 
-interface Config {
-  timezone: string
-  tempFolder: string
-  server: ServerConfig
-}
-
-const ServerConfig: Config = Object.freeze({
-  timezone: '+08:00',
-  tempFolder: 'tmp',
-  server: {
-    name: 'interview',
-    isSandbox: true,
-
-    cors: {
-      // https://github.com/expressjs/cors#configuration-options
-      credentials: true,
-      methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
-      origin: []
-    },
-    urls: {
-      default: '/',
-      static: [],
-      routers: [{ csrf: false, path: '/', file: '../app/router/default' }]
-    }
+export const ServerConfig: ServerConfig = Object.freeze({
+  name: 'CHANGE_ME',
+  isSandbox: true,
+  cors: {
+    // https://github.com/expressjs/cors#configuration-options
+    credentials: true,
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE'],
+    origin: '*'
+  },
+  urls: {
+    default: '/',
+    static: [],
+    routers: [
+      { csrf: false, path: '/api/v1/auth', file: '../app/core/routers/auth.router', version: 1 },
+      { csrf: false, path: '/api/v1/users', file: '../app/core/routers/user.router', version: 1 }
+    ]
   }
 })
-
-export default ServerConfig
