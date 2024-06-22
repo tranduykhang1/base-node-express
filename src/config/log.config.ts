@@ -72,19 +72,19 @@ export class AppLogger {
     this.name = name
   }
 
-  info(message: string) {
-    this.logger.info(`[${this.name}]:::: ${message}`)
+  info(message: string | object | unknown) {
+    this.logger.info(`[${this.name}]:::: ${JSON.stringify(message)}`)
   }
 
-  error(message: string | unknown) {
-    this.logger.error(`[${this.name}]:::: ${message}`)
+  error(message: string | object | unknown) {
+    this.logger.error(`[${this.name}]:::: ${JSON.stringify(message)}`)
   }
 
-  debug(message: string) {
-    this.logger.debug(`[${this.name}]:::: ${message}`)
+  debug(message: string | object | unknown) {
+    this.logger.debug(`[${this.name}]:::: ${JSON.stringify(message)}`)
   }
 
-  warn(message: string) {
-    this.logger.warn(`[${this.name}]:::: ${message}`)
+  warn(message: string | object | unknown) {
+    this.logger.warn(`[${this.name}]:::: ${JSON.stringify(message)}`)
   }
 }

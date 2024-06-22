@@ -7,33 +7,30 @@ import { UserServices } from '../core/services/user.service'
  * It provides methods to create instances of services with their dependencies injected.
  */
 class ServiceContainers {
-  private serviceMap: Map<string, object>
-  constructor() {
-    this.serviceMap = new Map()
-  }
+  private readonly serviceMap: Map<string, object> = new Map()
 
   get authServices(): AuthServices {
-    const serviceKey = AuthServices.name
-    if (!this.serviceMap.has(serviceKey)) {
-      this.serviceMap.set(serviceKey, new AuthServices(this.userServices, this.redisServices))
-    }
-    return this.serviceMap.get(serviceKey) as AuthServices
+    return this.getService(AuthServices, () => new AuthServices(this.userServices, this.redisServices))
   }
 
   get userServices(): UserServices {
-    const serviceKey = UserServices.name
-    if (!this.serviceMap.has(serviceKey)) {
-      this.serviceMap.set(serviceKey, new UserServices())
-    }
-    return this.serviceMap.get(serviceKey) as UserServices
+    return this.getService(UserServices)
   }
 
   get redisServices(): RedisServices {
-    const serviceKey = RedisServices.name
+    return this.getService(RedisServices)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private getService<T extends new (...args: any[]) => object>(
+    serviceClass: T,
+    factory?: (service: T) => object
+  ): InstanceType<T> {
+    const serviceKey = serviceClass.name
     if (!this.serviceMap.has(serviceKey)) {
-      this.serviceMap.set(serviceKey, new RedisServices())
+      this.serviceMap.set(serviceKey, factory ? factory(serviceClass) : new serviceClass())
     }
-    return this.serviceMap.get(serviceKey) as RedisServices
+    return this.serviceMap.get(serviceKey) as InstanceType<T>
   }
 }
 

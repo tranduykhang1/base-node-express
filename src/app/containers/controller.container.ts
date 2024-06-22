@@ -7,28 +7,23 @@ import { UserControllers } from '../core/controllers/user.controller'
  */
 class ControllerContainers {
   // Map to hold controller instances
-  private controllerMap: Map<string, object>
-
-  constructor() {
-    this.controllerMap = new Map()
-  }
+  private controllerMap = new Map<string, object>()
 
   get authControllers(): AuthControllers {
-    const controllerKey = AuthControllers.name
-    if (!this.controllerMap.has(controllerKey)) {
-      this.controllerMap.set(controllerKey, new AuthControllers())
-    }
-    return this.controllerMap.get(controllerKey) as AuthControllers
+    return this.getControllerInstance(AuthControllers)
   }
 
   get userControllers(): UserControllers {
-    const controllerKey = UserControllers.name
+    return this.getControllerInstance(UserControllers)
+  }
+
+  private getControllerInstance<T extends object>(controllerClass: new () => T): T {
+    const controllerKey = controllerClass.name
     if (!this.controllerMap.has(controllerKey)) {
-      this.controllerMap.set(controllerKey, new UserControllers())
+      this.controllerMap.set(controllerKey, new controllerClass())
     }
-    return this.controllerMap.get(controllerKey) as UserControllers
+    return this.controllerMap.get(controllerKey) as T
   }
 }
 
-// Create and export an instance of ControllerContainer
 export const controllerContainers = new ControllerContainers()

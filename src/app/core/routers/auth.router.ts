@@ -3,12 +3,11 @@ import { authMiddleware } from '../../../common/middlewares/auth.middleware'
 import { controllerContainers } from '../../containers/controller.container'
 
 const router = express.Router()
-
 /**
  * RegisterDTO
  * @typedef {object} RegisterDto
- * @property {string} email.required - The email
- * @property {string} password.required - The password
+ * @property {string} email.required - The email, johndoe@demo.com
+ * @property {string} password.required - The password, eg: 123123123
  * @property {string} firstName.required - The first name
  * @property {string} lastName.required - The last name
  */

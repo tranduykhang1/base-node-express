@@ -1,8 +1,9 @@
 import { Application, NextFunction, Request, Response } from 'express'
-import { AppLogger } from './log.config'
 import { BaseHttpError } from '../common/errors/base.error'
+import { AppLogger } from './log.config'
+import envConfig from './env.config'
 
-const log = new AppLogger('App')
+const log = new AppLogger('Global Configuration')
 
 const setupProcessHandlers = (): void => {
   process.on('exit', () => log.info('=== Fatal Error: Application Closed ==='))
@@ -18,6 +19,7 @@ const setupProcessHandlers = (): void => {
 interface Route {
   file: string
   path: string
+  version: number
 }
 
 /* eslint-disable */
@@ -28,18 +30,26 @@ const setupMiddlewareRouters = (app: Application, routes: Route[] | undefined): 
       .forEach((route) => {
         const routeModule = require(route.file)
         app.use(route.path, routeModule.router)
-        log.info(`${route.file} will be public access via ${route.path}`)
+        log.info(`ROUTE:::V${route.version}:::${route.file} will be public access via ${route.path}`)
         app.use(route.path, errorHandlerMiddleware)
       })
   }
 }
 
 const errorHandlerMiddleware = (err: BaseHttpError, _: Request, res: Response, next: NextFunction) => {
-  res.status(err.statusCode || 500).json({
-    message: err.message,
-    trace: err?.data || err?.message || {}
+  log.error(`Error occurred at::: ${err.message}, stack: ${err.stack}`)
+  if (envConfig.get('nodeEnv') === 'dev') {
+    res.status(err.statusCode ?? 500).json({
+      message: err.message,
+      trace: err?.data ?? err?.message ?? {},
+      stack: err.stack
+    })
+    return next()
+  }
+  res.status(err.statusCode ?? 500).json({
+    message: err.message
   })
-  next()
+  return next()
 }
 
-export { setupMiddlewareRouters, setupProcessHandlers, errorHandlerMiddleware }
+export { errorHandlerMiddleware, setupMiddlewareRouters, setupProcessHandlers }

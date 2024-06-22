@@ -20,7 +20,7 @@ export const ExpressConfig = (): Application => {
 
   app.use(httpContext.middleware)
 
-  app.use(cors())
+  app.use(cors(ServerConfig.cors))
   app.set('trust proxy', true)
 
   swaggerConfig(app)

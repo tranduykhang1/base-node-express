@@ -12,6 +12,6 @@ db.createUser(
    }
  )
 db.auth('${MONGO_INITDB_ROOT_USERNAME}','${MONGO_INITDB_ROOT_PASSWORD}')
-rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: '${MONGO_HOST}:27017'  }, { _id: 1, host: '${MONGO_HOST_1}:27017' }, { _id: 2, host: '${MONGO_HOST_2}:27017' }] })
+rs.initiate({ _id: 'rs0', members: [{ _id: 0, host: '${MONGO_HOST}:27017', priority: 1  }, { _id: 1, host: '${MONGO_HOST_1}:27017', priority: 0 }, { _id: 2, host: '${MONGO_HOST_2}:27017', priority: 0 }] })
 
 EOF
