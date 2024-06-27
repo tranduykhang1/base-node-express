@@ -6,18 +6,12 @@ import { LoginResponse } from '../../../common/responses/auth.response'
 import { Nullable, Optional } from '../../../common/types/common.type'
 import envConfig from '../../../config/env.config'
 import { Password } from '../../../utils/password.util'
-import { serviceContainers } from '../../containers/service.container'
 import { LoginDto, RegisterDto } from '../dto/auth.dto'
 import { User } from '../entities/user.entity'
-import { RedisServices } from './redis.service'
-import { UserServices } from './user.service'
+import { redisServices } from './redis.service'
+import { userServices } from './user.service'
 
-export class AuthServices {
-  constructor(
-    private userServices: UserServices,
-    private redisServices: RedisServices
-  ) {}
-
+class AuthServices {
   signToken(payload: Partial<User>, expiresIn: string, secret = envConfig.get('atSecret')): string {
     const token = jwt.sign(payload, secret, {
       expiresIn
@@ -37,7 +31,7 @@ export class AuthServices {
       this.signToken({ _id: user._id }, envConfig.get('rtExp'), envConfig.get('rtSecret'))
     ]
 
-    this.redisServices.set<LoginResponse>(REDIS_KEY.auth + user._id, { at, rt }, REDIS_TTL['7d'])
+    redisServices.set<LoginResponse>(REDIS_KEY.auth + user._id, { at, rt }, REDIS_TTL['7d'])
     return {
       at,
       rt
@@ -45,7 +39,7 @@ export class AuthServices {
   }
 
   async login(dto: LoginDto): Promise<Optional<LoginResponse>> {
-    const user = await this.userServices.findOne({ email: dto.email })
+    const user = await userServices.findOne({ email: dto.email })
     if (!user) {
       throw new BaseHttpError(StatusCodes.BAD_REQUEST, 'wrong credentials!')
     }
@@ -58,15 +52,15 @@ export class AuthServices {
     ]
 
     await Promise.all([
-      this.userServices.update({ _id: user._id }, { lastLogin: new Date() }),
-      this.redisServices.set<LoginResponse>(REDIS_KEY.auth + user._id, { at, rt }, REDIS_TTL['7d'])
+      userServices.update({ _id: user._id }, { lastLogin: new Date() }),
+      redisServices.set<LoginResponse>(REDIS_KEY.auth + user._id, { at, rt }, REDIS_TTL['7d'])
     ])
 
     return { at, rt }
   }
 
   async register(dto: RegisterDto): Promise<Nullable<User>> {
-    await this.userServices.checkDuplicateUser(dto.email)
+    await userServices.checkDuplicateUser(dto.email)
 
     const { encryptedData: password, key } = Password.encrypt(dto.password)
 
@@ -76,8 +70,10 @@ export class AuthServices {
       key
     }
 
-    const user = await serviceContainers.userServices.create(dto)
+    const user = await userServices.create(dto)
 
     return user
   }
 }
+
+export const authServices = new AuthServices()

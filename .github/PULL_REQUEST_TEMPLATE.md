@@ -1,9 +1,9 @@
-# FUIXLABS: PR INFORMATION
+# PR INFORMATION
 
 ## Completed task IDs:
 
-- CU-1
-- CU-2
+- TASK_ID-1
+- TASK_ID-2
 
 ## Describe your changes:
 

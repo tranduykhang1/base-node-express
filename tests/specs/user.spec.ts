@@ -1,15 +1,10 @@
 import { faker } from '@faker-js/faker'
-import { serviceContainers } from '../../src/app/containers/service.container'
 import { User } from '../../src/app/core/entities/user.entity'
-import { UserServices } from '../../src/app/core/services/user.service'
+import { userServices } from '../../src/app/core/services/user.service'
 import { BaseHttpError } from '../../src/common/errors/base.error'
 
 describe('UserServices', () => {
-  let userServices: UserServices
-
-  beforeEach(() => {
-    userServices = serviceContainers.userServices
-  })
+  beforeEach(() => {})
 
   afterEach(() => {
     jest.clearAllMocks()

@@ -3,7 +3,7 @@ import { BaseServices } from '../../../common/base/service.base'
 import { BaseHttpError } from '../../../common/errors/base.error'
 import { User, UserEntity } from '../entities/user.entity'
 
-export class UserServices extends BaseServices<User> {
+class UserServices extends BaseServices<User> {
   constructor() {
     super(UserEntity)
   }
@@ -15,3 +15,5 @@ export class UserServices extends BaseServices<User> {
     }
   }
 }
+
+export const userServices = new UserServices()

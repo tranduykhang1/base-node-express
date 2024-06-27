@@ -3,7 +3,7 @@ import { Nullable } from '../../../common/types/common.type'
 import envConfig from '../../../config/env.config'
 import { AppLogger } from '../../../config/log.config'
 
-export class RedisServices {
+class RedisServices {
   private logger = new AppLogger(RedisServices.name)
   private client: Redis | undefined
 
@@ -54,3 +54,5 @@ export class RedisServices {
     }
   }
 }
+
+export const redisServices = new RedisServices()
