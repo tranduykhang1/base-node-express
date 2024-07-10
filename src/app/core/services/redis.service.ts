@@ -1,11 +1,11 @@
-import { Redis } from 'ioredis'
-import { Nullable } from '../../../common/types/common.type'
+import { Redis, RedisOptions } from 'ioredis'
+import { Nullable, Optional } from '../../../common/types/common.type'
 import envConfig from '../../../config/env.config'
 import { AppLogger } from '../../../config/log.config'
 
 class RedisServices {
   private logger = new AppLogger(RedisServices.name)
-  private client: Redis | undefined
+  private client: Optional<Redis>
 
   async connect(): Promise<void> {
     try {
@@ -19,6 +19,16 @@ class RedisServices {
       this.logger.info(`Connected to REDIS DB ${envConfig.get('redisDB')}`)
     } catch (err) {
       this.logger.error(`Cannot connect to redis: ${err}`)
+    }
+  }
+
+  get connectOpts(): RedisOptions {
+    return {
+      port: +envConfig.get('redisPort'),
+      host: envConfig.get('redisHost'),
+      username: 'default',
+      password: envConfig.get('redisPass'),
+      db: +envConfig.get('redisDB')
     }
   }
 

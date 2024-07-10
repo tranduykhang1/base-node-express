@@ -6,6 +6,7 @@ import { AppLogger } from '../../config/log.config'
 class MongoSetup {
   log = new AppLogger('MongoSetup')
   private mongoServer: MongoMemoryServer | undefined
+  public conn: Mongoose
 
   async connect(): Promise<Mongoose | undefined> {
     if (envConfig.get('isTestEnv') === 'true') {
@@ -17,13 +18,17 @@ class MongoSetup {
 
   async connectForUse(): Promise<Mongoose | undefined> {
     try {
-      const conn = await mongoose.connect(envConfig.get('mongoUri'))
+      this.conn = await mongoose.connect(envConfig.get('mongoUri'))
       this.log.info('Connected to MongoDB')
-      return conn
+      return this.conn
     } catch (err) {
       this.log.error(err)
       return
     }
+  }
+
+  async startSession(): Promise<mongoose.ClientSession> {
+    return this.conn.startSession()
   }
 
   async connectForTesting(): Promise<void> {

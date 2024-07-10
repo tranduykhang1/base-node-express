@@ -8,7 +8,7 @@ import { redisServices } from '../../app/core/services/redis.service'
 import envConfig from '../../config/env.config'
 import { REDIS_KEY } from '../enums/redis.enum'
 import { USER_ROLE } from '../enums/user.enum'
-import { BaseHttpError } from '../errors/base.error'
+import { BaseHttpError } from '../base/base.error'
 import { BaseValidator } from '../errors/validator.error'
 import { LoginResponse } from '../responses/auth.response'
 

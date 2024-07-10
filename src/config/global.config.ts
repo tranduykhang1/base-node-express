@@ -1,5 +1,5 @@
 import { Application, NextFunction, Request, Response } from 'express'
-import { BaseHttpError } from '../common/errors/base.error'
+import { BaseHttpError } from '../common/base/base.error'
 import { AppLogger } from './log.config'
 import envConfig from './env.config'
 
@@ -39,16 +39,16 @@ const setupMiddlewareRouters = (app: Application, routes: Route[] | undefined): 
 const errorHandlerMiddleware = (err: BaseHttpError, _: Request, res: Response, next: NextFunction) => {
   log.error(`Error occurred at::: ${err.message}, stack: ${err.stack}`)
   if (envConfig.get('nodeEnv') === 'dev') {
-    res.status(err.statusCode ?? 500).send({
+    res.status(err.statusCode ?? 500).json({
       message: err.message,
       trace: err?.data ?? err?.message ?? {},
       stack: err.stack
     })
-    return next()
+  } else {
+    res.status(err.statusCode ?? 500).json({
+      message: err.message
+    })
   }
-  res.status(err.statusCode ?? 500).send({
-    message: err.message
-  })
   return next()
 }
 

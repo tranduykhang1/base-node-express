@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { BaseController } from '../../../common/base/controller.base'
-import { BaseHttpError } from '../../../common/errors/base.error'
+import { BaseHttpError } from '../../../common/base/base.error'
 import { getAuthenticatedUser } from '../../../common/requests/auth.requests'
 import { AppLogger } from '../../../config/log.config'
 import { userServices } from '../services/user.service'

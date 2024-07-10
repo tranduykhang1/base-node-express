@@ -1,6 +1,6 @@
 import { StatusCodes } from 'http-status-codes'
+import { BaseHttpError } from '../../../common/base/base.error'
 import { BaseServices } from '../../../common/base/service.base'
-import { BaseHttpError } from '../../../common/errors/base.error'
 import { User, UserEntity } from '../entities/user.entity'
 
 class UserServices extends BaseServices<User> {
@@ -9,10 +9,13 @@ class UserServices extends BaseServices<User> {
   }
 
   async checkDuplicateUser(email: string): Promise<void> {
-    const user = await this.findOne({ email })
-    if (user) {
-      throw new BaseHttpError(StatusCodes.CONFLICT, 'duplicate email!')
-    }
+    return this.withSession(async (session) => {
+      await this.update({ email }, { lastName: 'Updated' }, session)
+      const user = await this.findOne({ email })
+      if (user) {
+        throw new BaseHttpError(StatusCodes.CONFLICT, 'duplicate email!')
+      }
+    })
   }
 }
 

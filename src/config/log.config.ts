@@ -52,7 +52,6 @@ export class AppLogger {
     this.logger = createLogger({
       format: format.combine(
         format.timestamp(),
-        // format.colorize(),
         format.errors({ stack: true }),
         customFormat
       ),

@@ -11,7 +11,7 @@ const router = express.Router()
  * @return {string} 200 - success response - application/json
  * @security BearerAuth
  */
-router.get('/me', authMiddleware.isAuth, userControllers.getCurrentUser)
+router.get('/me', authMiddleware.isAuth, userControllers.getCurrentUser.bind(userControllers))
 
 /**
  * GET /api/v1/users
@@ -20,6 +20,6 @@ router.get('/me', authMiddleware.isAuth, userControllers.getCurrentUser)
  * @return {string} 200 - success response - application/json
  * @security BearerAuth
  */
-router.get('/', authMiddleware.isAuth, authMiddleware.isAdmin, userControllers.getAll)
+router.get('/', authMiddleware.isAuth, authMiddleware.isAdmin, userControllers.getAll.bind(userControllers))
 
 exports.router = router

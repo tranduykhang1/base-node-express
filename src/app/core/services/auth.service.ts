@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
 import { REDIS_KEY, REDIS_TTL } from '../../../common/enums/redis.enum'
-import { BaseHttpError } from '../../../common/errors/base.error'
+import { BaseHttpError } from '../../../common/base/base.error'
 import { LoginResponse } from '../../../common/responses/auth.response'
 import { Nullable, Optional } from '../../../common/types/common.type'
 import envConfig from '../../../config/env.config'
@@ -10,6 +10,7 @@ import { LoginDto, RegisterDto } from '../dto/auth.dto'
 import { User } from '../entities/user.entity'
 import { redisServices } from './redis.service'
 import { userServices } from './user.service'
+import { mailService } from './mail.service'
 
 class AuthServices {
   signToken(payload: Partial<User>, expiresIn: string, secret = envConfig.get('atSecret')): string {
@@ -71,6 +72,13 @@ class AuthServices {
     }
 
     const user = await userServices.create(dto)
+
+    await mailService.sendMail({
+      html: 'Hello',
+      to: user.email,
+      subject: 'Demo',
+      text: 'Demo'
+    })
 
     return user
   }
