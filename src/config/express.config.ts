@@ -1,14 +1,14 @@
 import { json } from 'body-parser'
+import cors from 'cors'
 import express, { Application } from 'express'
 import httpContext from 'express-http-context2'
 import helmet from 'helmet'
 import morgan from 'morgan'
-import { serviceContainers } from '../app/containers/service.container'
 import { mongoSetup } from '../app/db/mongo.db'
 import { setupMiddlewareRouters } from './global.config'
 import { ServerConfig } from './server.config'
 import swaggerConfig from './swagger.config'
-import cors from 'cors'
+import { redisServices } from '../app/core/services/redis.service'
 
 export const ExpressConfig = (): Application => {
   const app = express()
@@ -30,7 +30,7 @@ export const ExpressConfig = (): Application => {
   setupMiddlewareRouters(app, routers)
 
   mongoSetup.connect()
-  serviceContainers.redisServices.connect()
+  redisServices.connect()
 
   return app
 }

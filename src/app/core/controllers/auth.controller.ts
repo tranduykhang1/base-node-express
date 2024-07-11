@@ -1,20 +1,17 @@
 import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import BaseController from '../../../common/base/controller.response'
+import { BaseController } from '../../../common/base/controller.base'
 import { BaseValidator } from '../../../common/errors/validator.error'
-import { serviceContainers } from '../../containers/service.container'
 import { LoginDto, RegisterDto } from '../dto/auth.dto'
+import { authServices } from '../services/auth.service'
+import { userServices } from '../services/user.service'
 
-export class AuthControllers extends BaseController {
-  constructor() {
-    super()
-  }
-
+class AuthControllers extends BaseController {
   async register(req: Request, res: Response, next: NextFunction) {
     try {
       await new BaseValidator<RegisterDto>().validate(req.body, RegisterDto, next)
 
-      const data = await serviceContainers.authServices.register(req.body)
+      const data = await authServices.register(req.body)
 
       return super.send(
         res,
@@ -33,7 +30,7 @@ export class AuthControllers extends BaseController {
     try {
       await new BaseValidator<LoginDto>().validate(req.body, LoginDto, next)
 
-      const data = await serviceContainers.authServices.login(req.body)
+      const data = await authServices.login(req.body)
 
       return super.send(res, {
         data,
@@ -48,10 +45,10 @@ export class AuthControllers extends BaseController {
     try {
       const userId = req.body._id
 
-      const user = await serviceContainers.userServices.findOne({ _id: userId })
+      const user = await userServices.findOne({ _id: userId })
 
       if (user) {
-        const data = await serviceContainers.authServices.refreshToken(user)
+        const data = await authServices.refreshToken(user)
 
         return super.send(res, {
           data,
@@ -63,3 +60,5 @@ export class AuthControllers extends BaseController {
     }
   }
 }
+
+export const authControllers = new AuthControllers()

@@ -1,6 +1,6 @@
 import express from 'express'
 import { authMiddleware } from '../../../common/middlewares/auth.middleware'
-import { controllerContainers } from '../../containers/controller.container'
+import { authControllers } from '../controllers/auth.controller'
 
 const router = express.Router()
 /**
@@ -32,7 +32,7 @@ const router = express.Router()
  * @param {RegisterDto} request.body.required - body - application/json
  * @return {string} 200 - success response - application/json
  */
-router.post('/register', controllerContainers.authControllers.register)
+router.post('/register', authControllers.register)
 
 /**
  * POST /api/v1/auth/login
@@ -41,7 +41,7 @@ router.post('/register', controllerContainers.authControllers.register)
  * @param {LoginDto} request.body.required - body - application/json
  * @return {string} 200 - success response - application/json
  */
-router.post('/login', controllerContainers.authControllers.login)
+router.post('/login', authControllers.login.bind(authControllers))
 
 /**
  * POST /api/v1/auth/refresh-token
@@ -50,6 +50,6 @@ router.post('/login', controllerContainers.authControllers.login)
  * @param {RefreshTokenDto} request.body.required - body - application/json
  * @return {string} 200 - success response - application/json
  */
-router.post('/refresh-token', authMiddleware.refreshToken, controllerContainers.authControllers.refreshToken)
+router.post('/refresh-token', authMiddleware.refreshToken, authControllers.refreshToken.bind(authControllers))
 
 exports.router = router

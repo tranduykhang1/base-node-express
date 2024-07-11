@@ -1,6 +1,6 @@
 import express from 'express'
 import { authMiddleware } from '../../../common/middlewares/auth.middleware'
-import { controllerContainers } from '../../containers/controller.container'
+import { userControllers } from '../controllers/user.controller'
 
 const router = express.Router()
 
@@ -11,7 +11,7 @@ const router = express.Router()
  * @return {string} 200 - success response - application/json
  * @security BearerAuth
  */
-router.get('/me', authMiddleware.isAuth, controllerContainers.userControllers.getCurrentUser)
+router.get('/me', authMiddleware.isAuth, userControllers.getCurrentUser.bind(userControllers))
 
 /**
  * GET /api/v1/users
@@ -20,6 +20,6 @@ router.get('/me', authMiddleware.isAuth, controllerContainers.userControllers.ge
  * @return {string} 200 - success response - application/json
  * @security BearerAuth
  */
-router.get('/', authMiddleware.isAuth, authMiddleware.isAdmin, controllerContainers.userControllers.getAll)
+router.get('/', authMiddleware.isAuth, authMiddleware.isAdmin, userControllers.getAll.bind(userControllers))
 
 exports.router = router

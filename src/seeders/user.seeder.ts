@@ -1,9 +1,9 @@
 import { faker } from '@faker-js/faker'
 import { User } from '../app/core/entities/user.entity'
 import { Seeder } from '../common/interfaces/seeder.interface'
-import { serviceContainers } from '../app/containers/service.container'
 import { Password } from '../utils/password.util'
 import { USER_ROLE } from '../common/enums/user.enum'
+import { userServices } from '../app/core/services/user.service'
 
 export class UserSeeder implements Seeder {
   async seed(): Promise<void> {
@@ -21,9 +21,9 @@ export class UserSeeder implements Seeder {
         role: i === 0 ? USER_ROLE.admin : USER_ROLE.user
       })
     }
-    await serviceContainers.userServices.createMany(items)
+    await userServices.createMany(items)
   }
   async drop(): Promise<void> {
-    await serviceContainers.userServices.delete({})
+    await userServices.delete({})
   }
 }

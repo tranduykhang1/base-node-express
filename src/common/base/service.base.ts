@@ -1,10 +1,12 @@
+import { mongoose } from '@typegoose/typegoose'
 import { StatusCodes } from 'http-status-codes'
 import { FilterQuery, Model } from 'mongoose'
+import { mongoSetup } from '../../app/db/mongo.db'
 import envConfig from '../../config/env.config'
 import { AppLogger } from '../../config/log.config'
 import { SORT_BY, SORT_ORDER } from '../enums/pagination.enum'
-import { BaseHttpError } from '../errors/base.error'
 import { Nullable } from '../types/common.type'
+import { BaseHttpError } from './base.error'
 
 export class BaseServices<T> {
   model: Model<T>
@@ -19,17 +21,17 @@ export class BaseServices<T> {
     this.model = model
   }
 
-  async create(input: Partial<T>, createdBy = ''): Promise<T> {
+  async create(input: Partial<T>, session?: mongoose.ClientSession, createdBy = ''): Promise<T> {
     try {
       const createInput = { ...input, createdBy }
-      const createdData = await this.model.create(createInput)
-      return createdData
+      const createdData = await this.model.create([createInput], { session })
+      return createdData[0]
     } catch (err) {
       throw this.handleServiceError(err, 'Create')
     }
   }
 
-  async createMany(input: Partial<T[]>, createdBy = ''): Promise<void> {
+  async createMany(input: Partial<T[]>, session?: mongoose.ClientSession, createdBy = ''): Promise<void> {
     try {
       const createInput = input.map((i) => {
         return {
@@ -37,7 +39,7 @@ export class BaseServices<T> {
           createdBy
         }
       })
-      await this.model.insertMany(createInput)
+      await this.model.insertMany(createInput, { session })
       return
     } catch (err) {
       throw this.handleServiceError(err, 'Create many')
@@ -46,7 +48,7 @@ export class BaseServices<T> {
 
   async findOne(filter: FilterQuery<T>, throwErr = false): Promise<Nullable<T>> {
     try {
-      const data = this.model.findOne(filter)
+      const data = await this.model.findOne(filter)
       if (throwErr && !data) {
         throw this.handleServiceError(Error(`${this.model.name} not found`), 'findOne')
       }
@@ -56,18 +58,26 @@ export class BaseServices<T> {
     }
   }
 
-  async update(filter: FilterQuery<T>, input: Partial<Record<keyof T, unknown>>, updatedBy = ''): Promise<Nullable<T>> {
+  async update(
+    filter: FilterQuery<T>,
+    input: Partial<Record<keyof T, unknown>>,
+    session?: mongoose.ClientSession,
+    strictMode = false,
+    updatedBy = ''
+  ): Promise<Nullable<T>> {
     try {
       const updateInput = { ...input, updatedBy }
-      const result = await this.model.findOneAndUpdate(filter, { $set: updateInput }, { new: true })
-      if (!result) throw this.handleServiceError(Error(`${this.model.name} not found`), `Update`)
+      const result = await this.model.findOneAndUpdate(filter, { $set: updateInput }, { new: true, session })
+      if (strictMode) {
+        if (!result) throw this.handleServiceError(Error(`${this.model.name} not found`), `Update`)
+      }
       return result
     } catch (err) {
       throw this.handleServiceError(err, `Update ${this.model.name}`)
     }
   }
 
-  async softDelete(filter: FilterQuery<T>, deletedBy = ''): Promise<void> {
+  async softDelete(filter: FilterQuery<T>, deletedBy = '', session?: mongoose.ClientSession): Promise<void> {
     try {
       const [foundDocument] = await Promise.all([
         this.model.findOne(filter),
@@ -76,7 +86,7 @@ export class BaseServices<T> {
           {
             $set: { deletedAt: new Date(), isDeleted: true, deletedBy }
           },
-          { new: true }
+          { new: true, session }
         )
       ])
       if (!foundDocument) throw this.handleServiceError(Error(`${this.model.name} not found`), `SoftDelete`)
@@ -85,9 +95,9 @@ export class BaseServices<T> {
     }
   }
 
-  async delete(filter: FilterQuery<T>): Promise<void> {
+  async delete(filter: FilterQuery<T>, session?: mongoose.ClientSession): Promise<void> {
     try {
-      await this.model.deleteMany(filter)
+      await this.model.deleteMany(filter, { session })
       return
     } catch (err) {
       throw this.handleServiceError(err, `Delete`)
@@ -147,5 +157,20 @@ export class BaseServices<T> {
     this.log.error(`Error occurred during ${operation} operation for ${this.model.name}:`)
     this.log.error(err)
     throw new BaseHttpError(StatusCodes.BAD_REQUEST, err)
+  }
+
+  async withSession<T = void>(fn: (session: mongoose.ClientSession) => Promise<T>): Promise<T> {
+    const session = await mongoSetup.startSession()
+    try {
+      await session.startTransaction()
+      const result = await fn(session)
+      await session.commitTransaction()
+      return result
+    } catch (error) {
+      await session.abortTransaction()
+      throw error
+    } finally {
+      await session.endSession()
+    }
   }
 }

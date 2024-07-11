@@ -1,8 +1,8 @@
 import { StatusCodes } from 'http-status-codes'
 import request, { Response } from 'supertest'
+import { redisServices } from '../../src/app/core/services/redis.service'
 import { mongoSetup } from '../../src/app/db/mongo.db'
 import { app, server } from '../../src/index'
-import { serviceContainers } from '../../src/app/containers/service.container'
 
 describe('AuthController (e2e) /api/v1', () => {
   const mockUser = {
@@ -18,7 +18,7 @@ describe('AuthController (e2e) /api/v1', () => {
 
   afterAll(async () => {
     server.close()
-    await serviceContainers.redisServices.clear()
+    await redisServices.clear()
     await mongoSetup.close()
   })
 

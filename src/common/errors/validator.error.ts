@@ -2,7 +2,7 @@
 import { validate } from 'class-validator'
 import { NextFunction } from 'express'
 import { StatusCodes } from 'http-status-codes'
-import { BaseHttpError } from './base.error'
+import { BaseHttpError } from '../base/base.error'
 
 export class BaseValidator<T extends object> {
   async validate(dto: T, dtoClass: new () => T, next: NextFunction): Promise<BaseHttpError | unknown> {
