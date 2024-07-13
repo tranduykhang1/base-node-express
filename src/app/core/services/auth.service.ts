@@ -1,18 +1,24 @@
 import { StatusCodes } from 'http-status-codes'
 import jwt from 'jsonwebtoken'
-import { REDIS_KEY, REDIS_TTL } from '../../../common/enums/redis.enum'
 import { BaseHttpError } from '../../../common/base/base.error'
+import { JOB_NAME, QUEUE_NAME } from '../../../common/enums/queue.enum'
+import { REDIS_KEY, REDIS_TTL } from '../../../common/enums/redis.enum'
 import { LoginResponse } from '../../../common/responses/auth.response'
 import { Nullable, Optional } from '../../../common/types/common.type'
 import envConfig from '../../../config/env.config'
 import { Password } from '../../../utils/password.util'
 import { LoginDto, RegisterDto } from '../dto/auth.dto'
 import { User } from '../entities/user.entity'
+import QueueService from './queue.service'
 import { redisServices } from './redis.service'
 import { userServices } from './user.service'
-import { mailService } from './mail.service'
+import { registrationTemplate } from '../../../common/templates/registration.template'
 
 class AuthServices {
+  #queue: QueueService
+  constructor() {
+    this.#queue = new QueueService(QUEUE_NAME.AUTH)
+  }
   signToken(payload: Partial<User>, expiresIn: string, secret = envConfig.get('atSecret')): string {
     const token = jwt.sign(payload, secret, {
       expiresIn
@@ -73,11 +79,11 @@ class AuthServices {
 
     const user = await userServices.create(dto)
 
-    await mailService.sendMail({
-      html: 'Hello',
+    this.#queue.addJob(JOB_NAME.AUTH_SEND_VERIFICATION, {
+      html: registrationTemplate(user.firstName, 'Link'),
       to: user.email,
-      subject: 'Demo',
-      text: 'Demo'
+      subject: 'Verify your email address',
+      text: 'Verify your email address'
     })
 
     return user

@@ -2,9 +2,11 @@ import { StatusCodes } from 'http-status-codes'
 import { LoginDto, RegisterDto } from '../../src/app/core/dto/auth.dto'
 import { User } from '../../src/app/core/entities/user.entity'
 import { authServices } from '../../src/app/core/services/auth.service'
+import QueueService from '../../src/app/core/services/queue.service'
 import { redisServices } from '../../src/app/core/services/redis.service'
 import { userServices } from '../../src/app/core/services/user.service'
-import { BaseHttpError } from '../../src/common/errors/base.error'
+import { BaseHttpError } from '../../src/common/base/base.error'
+import { QUEUE_NAME } from '../../src/common/enums/queue.enum'
 import { Password } from '../../src/utils/password.util'
 
 describe('AuthServices', () => {
@@ -70,6 +72,8 @@ describe('AuthServices', () => {
       jest
         .spyOn(userServices, 'checkDuplicateUser')
         .mockRejectedValueOnce(new BaseHttpError(StatusCodes.CONFLICT, 'Email already exists'))
+
+      jest.spyOn(new QueueService(QUEUE_NAME.AUTH), 'addJob').mockResolvedValueOnce()
 
       await expect(authServices.register(dto)).rejects.toThrow(BaseHttpError)
       expect(userServices.checkDuplicateUser).toHaveBeenCalledWith(dto.email)

@@ -13,7 +13,7 @@
     "prettier:fix": "prettier --write .",
     "prepare": "husky",
     "test": "NODE_ENV=test jest",
-    "test:e2e": "NODE_ENV=e2e-test jest --config ./tests/e2e-specs/e2e.config.json --forceExit --maxWorkers=1",
+    "test:e2e": "NODE_ENV=e2e-test jest --config ./tests/e2e-specs/e2e.config.json --forceExit",
     "seed": "pnpm build && docker compose exec api node dist/seeders/index.js",
     "seed:refresh": "pnpm build && docker compose exec api node dist/seeders/index.js --refresh"
   },
