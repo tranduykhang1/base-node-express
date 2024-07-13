@@ -2,6 +2,7 @@ import { Job, Queue, Worker } from 'bullmq'
 import { JOB_NAME, QUEUE_NAME } from '../../../common/enums/queue.enum'
 import { AppLogger } from '../../../config/log.config'
 import { redisServices } from './redis.service'
+import { mailService } from './mail.service'
 
 class QueueService {
   private queue: Queue
@@ -34,7 +35,10 @@ class QueueService {
   }
 
   private async processJob(job: Job) {
-    console.log(`Processing job ${job.id} with data:`, job.data)
+    switch (job.name) {
+      case JOB_NAME.AUTH_SEND_VERIFICATION:
+        await mailService.sendMail(job.data)
+    }
   }
 }
 

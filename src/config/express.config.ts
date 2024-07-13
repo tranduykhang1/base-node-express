@@ -23,14 +23,14 @@ export const ExpressConfig = (): Application => {
   app.use(cors(ServerConfig.cors))
   app.set('trust proxy', true)
 
+  mongoSetup.connect()
+  redisServices.connect()
+
   swaggerConfig(app)
 
   const routers = ServerConfig.urls.routers
 
   setupMiddlewareRouters(app, routers)
-
-  mongoSetup.connect()
-  redisServices.connect()
 
   return app
 }

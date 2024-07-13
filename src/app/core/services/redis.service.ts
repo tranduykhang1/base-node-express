@@ -7,15 +7,17 @@ class RedisServices {
   private logger = new AppLogger(RedisServices.name)
   private client: Optional<Redis>
 
+  private _connectOpts = {
+    port: +envConfig.get('redisPort'),
+    host: envConfig.get('redisHost'),
+    username: 'default',
+    password: envConfig.get('redisPass'),
+    db: +envConfig.get('redisDB')
+  }
+
   async connect(): Promise<void> {
     try {
-      this.client = new Redis({
-        port: +envConfig.get('redisPort'),
-        host: envConfig.get('redisHost'),
-        username: 'default',
-        password: envConfig.get('redisPass'),
-        db: +envConfig.get('redisDB')
-      })
+      this.client = new Redis(this._connectOpts)
       this.logger.info(`Connected to REDIS DB ${envConfig.get('redisDB')}`)
     } catch (err) {
       this.logger.error(`Cannot connect to redis: ${err}`)
@@ -23,13 +25,7 @@ class RedisServices {
   }
 
   get connectOpts(): RedisOptions {
-    return {
-      port: +envConfig.get('redisPort'),
-      host: envConfig.get('redisHost'),
-      username: 'default',
-      password: envConfig.get('redisPass'),
-      db: +envConfig.get('redisDB')
-    }
+    return this._connectOpts
   }
 
   async set<T>(key: string, value: T, ttl: number): Promise<void> {

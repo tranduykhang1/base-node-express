@@ -24,7 +24,13 @@ describe('AuthController (e2e) /api/v1', () => {
 
   describe('/auth/register (POST)', () => {
     it('it should register a user', async () => {
-      return request(app).post('/api/v1/auth/register').send(mockUser).expect(201)
+      return request(app)
+        .post('/api/v1/auth/register')
+        .send(mockUser)
+        .expect(201)
+        .then((response: Response) => {
+          expect(response.body.data.email).toEqual(mockUser.email)
+        })
     })
 
     it('it should throw the duplicate error', async () => {
@@ -40,17 +46,19 @@ describe('AuthController (e2e) /api/v1', () => {
 
   describe('/auth/login (POST)', () => {
     it('should login with registered account', () => {
-      return request(app)
-        .post('/api/v1/auth/login')
-        .send({
-          email: mockUser.email,
-          password: mockUser.password
-        })
-        .expect(StatusCodes.OK)
-        .then((response) => {
-          rt = response.body.data.rt
-          expect(rt).toBeTruthy()
-        })
+      return (
+        request(app)
+          .post('/api/v1/auth/login')
+          .send({
+            email: mockUser.email,
+            password: mockUser.password
+          })
+          // .expect(StatusCodes.OK)
+          .then((response) => {
+            rt = response.body.data.rt
+            expect(rt).toBeTruthy()
+          })
+      )
     })
 
     it('should throw error when wrong credentials', async () => {

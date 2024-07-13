@@ -50,11 +50,7 @@ export class AppLogger {
     })
 
     this.logger = createLogger({
-      format: format.combine(
-        format.timestamp(),
-        format.errors({ stack: true }),
-        customFormat
-      ),
+      format: format.combine(format.timestamp(), format.errors({ stack: true }), customFormat),
       transports: [
         new transports.Console(),
         new transports.File({

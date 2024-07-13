@@ -1,4 +1,4 @@
-import { MongoMemoryServer } from 'mongodb-memory-server'
+import { MongoMemoryReplSet, MongoMemoryServer } from 'mongodb-memory-server'
 import mongoose, { Mongoose } from 'mongoose'
 import envConfig from '../../config/env.config'
 import { AppLogger } from '../../config/log.config'
@@ -7,6 +7,7 @@ class MongoSetup {
   log = new AppLogger('MongoSetup')
   private mongoServer: MongoMemoryServer | undefined
   public conn: Mongoose
+  private repliset: MongoMemoryReplSet
 
   async connect(): Promise<Mongoose | undefined> {
     if (envConfig.get('isTestEnv') === 'true') {
@@ -28,14 +29,17 @@ class MongoSetup {
   }
 
   async startSession(): Promise<mongoose.ClientSession> {
+    if (!this.conn) {
+      await this.connectForTesting()
+    }
     return this.conn.startSession()
   }
 
   async connectForTesting(): Promise<void> {
     try {
-      this.mongoServer = await MongoMemoryServer.create()
-      const mongoUri = await this.mongoServer.getUri()
-      await mongoose.connect(mongoUri)
+      this.repliset = await MongoMemoryReplSet.create({ replSet: { count: 2 } })
+      const mongoUri = this.repliset.getUri()
+      this.conn = await mongoose.connect(mongoUri)
       this.log.info('Connected to the Testing MongoDB')
     } catch (err) {
       this.log.error(err)
@@ -46,7 +50,7 @@ class MongoSetup {
   async close(): Promise<void> {
     await mongoose.disconnect()
     if (this.mongoServer) {
-      await this.mongoServer!.stop()
+      await this.repliset!.stop()
     }
   }
 
