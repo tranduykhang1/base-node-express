@@ -3,7 +3,7 @@ import envConfig from '../config/env.config'
 import { UserSeeder } from './user.seeder'
 
 class Seeder {
-  private seeders = [UserSeeder]
+  #seeders = [UserSeeder]
 
   constructor() {
     this.run()
@@ -18,7 +18,7 @@ class Seeder {
   }
 
   async seed() {
-    for (const SeederClass of this.seeders) {
+    for (const SeederClass of this.#seeders) {
       const seeder = new SeederClass()
       await seeder.seed()
       console.log(`${SeederClass.name} completed`)
@@ -28,7 +28,7 @@ class Seeder {
   }
 
   async dropAndSeed() {
-    for await (const SeederClass of this.seeders) {
+    for await (const SeederClass of this.#seeders) {
       const seeder = new SeederClass()
       await seeder.drop()
       await seeder.seed()

@@ -4,10 +4,10 @@ import envConfig from '../../../config/env.config'
 import { AppLogger } from '../../../config/log.config'
 
 class RedisServices {
-  private logger = new AppLogger(RedisServices.name)
-  private client: Optional<Redis>
+  #logger = new AppLogger(RedisServices.name)
+  #client: Optional<Redis>
 
-  private _connectOpts = {
+  #_connectOpts = {
     port: +envConfig.get('redisPort'),
     host: envConfig.get('redisHost'),
     username: 'default',
@@ -17,45 +17,45 @@ class RedisServices {
 
   async connect(): Promise<void> {
     try {
-      this.client = new Redis(this._connectOpts)
-      this.logger.info(`Connected to REDIS DB ${envConfig.get('redisDB')}`)
+      this.#client = new Redis(this.#_connectOpts)
+      this.#logger.info(`Connected to REDIS DB ${envConfig.get('redisDB')}`)
     } catch (err) {
-      this.logger.error(`Cannot connect to redis: ${err}`)
+      this.#logger.error(`✨ Cannot connect to redis: ${err}`)
     }
   }
 
   get connectOpts(): RedisOptions {
-    return this._connectOpts
+    return this.#_connectOpts
   }
 
   async set<T>(key: string, value: T, ttl: number): Promise<void> {
     try {
-      await this.client!.set(key, JSON.stringify(value), 'EX', ttl)
+      await this.#client!.set(key, JSON.stringify(value), 'EX', ttl)
       return
     } catch (err) {
-      this.logger.error(`Set error: ${err}`)
+      this.#logger.error(`Set error: ${err}`)
       throw err
     }
   }
 
   async get<T>(key: string): Promise<Nullable<T>> {
     try {
-      const result = await this.client!.get(key)
+      const result = await this.#client!.get(key)
       if (result) {
         return JSON.parse(result)
       }
       return null
     } catch (err) {
-      this.logger.error(`Get error: ${err}`)
+      this.#logger.error(`Get error: ${err}`)
       throw err
     }
   }
 
   async clear(): Promise<void> {
     try {
-      await this.client!.flushall()
+      await this.#client!.flushall()
     } catch (err) {
-      this.logger.error(`Clear error ${err}`)
+      this.#logger.error(`Clear error ${err}`)
       throw err
     }
   }

@@ -5,3 +5,4 @@ logs/*
 commitlint.config.js
 commitlint.config.js.*
 coverage/
+firebase.json

@@ -32,3 +32,8 @@ export class RefreshTokenDto {
   @IsJWT()
   token!: string
 }
+
+export class FirebaseAuthDto {
+  token: string
+  type: 'google' | 'facebook' | 'apple'
+}

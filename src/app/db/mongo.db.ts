@@ -5,9 +5,9 @@ import { AppLogger } from '../../config/log.config'
 
 class MongoSetup {
   log = new AppLogger('MongoSetup')
-  private mongoServer: MongoMemoryServer | undefined
+  #mongoServer: MongoMemoryServer | undefined
   public conn: Mongoose
-  private repliset: MongoMemoryReplSet
+  #replicaSet: MongoMemoryReplSet
 
   async connect(): Promise<Mongoose | undefined> {
     if (envConfig.get('isTestEnv') === 'true') {
@@ -20,7 +20,7 @@ class MongoSetup {
   async connectForUse(): Promise<Mongoose | undefined> {
     try {
       this.conn = await mongoose.connect(envConfig.get('mongoUri'))
-      this.log.info('Connected to MongoDB')
+      this.log.info('✨ Connected to MongoDB')
       return this.conn
     } catch (err) {
       this.log.error(err)
@@ -37,10 +37,10 @@ class MongoSetup {
 
   async connectForTesting(): Promise<void> {
     try {
-      this.repliset = await MongoMemoryReplSet.create({ replSet: { count: 2 } })
-      const mongoUri = this.repliset.getUri()
+      this.#replicaSet = await MongoMemoryReplSet.create({ replSet: { count: 2 } })
+      const mongoUri = this.#replicaSet.getUri()
       this.conn = await mongoose.connect(mongoUri)
-      this.log.info('Connected to the Testing MongoDB')
+      this.log.info('✨ Connected to the Testing MongoDB')
     } catch (err) {
       this.log.error(err)
       return
@@ -49,8 +49,8 @@ class MongoSetup {
 
   async close(): Promise<void> {
     await mongoose.disconnect()
-    if (this.mongoServer) {
-      await this.repliset!.stop()
+    if (this.#mongoServer) {
+      await this.#replicaSet!.stop()
     }
   }
 
