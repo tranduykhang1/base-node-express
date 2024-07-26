@@ -8,6 +8,6 @@ envConfig.init()
 
 const app = ExpressConfig()
 const PORT = envConfig.get('port') || 3030
-const server = app.listen(PORT, () => new AppLogger('App').info('Server Running on Port:::' + PORT))
+const server = app.listen(PORT, () => new AppLogger('App').info('✨ Server Running on Port:::' + PORT))
 
 export { app, server }

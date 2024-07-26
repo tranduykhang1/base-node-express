@@ -9,6 +9,7 @@ import { setupMiddlewareRouters } from './global.config'
 import { ServerConfig } from './server.config'
 import swaggerConfig from './swagger.config'
 import { redisServices } from '../app/core/services/redis.service'
+import { firebaseLib } from '../app/core/services/firebase-lib.service'
 
 export const ExpressConfig = (): Application => {
   const app = express()
@@ -25,6 +26,7 @@ export const ExpressConfig = (): Application => {
 
   mongoSetup.connect()
   redisServices.connect()
+  firebaseLib.connect()
 
   swaggerConfig(app)
 

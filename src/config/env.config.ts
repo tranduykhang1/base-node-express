@@ -20,36 +20,36 @@ interface EnvConfigInterface {
 }
 
 class EnvConfig {
-  private config: EnvConfigInterface = {}
+  #config: EnvConfigInterface = {}
 
   constructor() {
     this.init()
-    console.log(this.config)
+    console.log(this.#config)
   }
 
   init() {
-    this.config.nodeEnv = process.env.NODE_ENV
-    this.config.port = process.env.PORT
-    this.config.apiHost = process.env.API_HOST || 'http://localhost:3030'
-    this.config.mongoUri = process.env.MONGO_URI
-    this.config.logLevel = process.env.LOG_LEVEL
-    this.config.pwSecret = process.env.PW_SECRET
-    this.config.redisUri = process.env.REDIS_URI
-    this.config.redisPort = process.env.REDIS_PORT
-    this.config.redisHost = process.env.REDIS_HOST
-    this.config.redisPass = process.env.REDIS_PASSWORD
-    this.config.isTestEnv = process.env.NODE_ENV?.includes('test').toString()
-    this.config.redisDB = process.env.REDIS_DB
-    this.config.atExp = process.env.AT_EXPIRE
-    this.config.rtExp = process.env.RT_EXPIRE
-    this.config.atSecret = process.env.JWT_SECRET
-    this.config.rtSecret = process.env.JWT_REFRESH_SECRET
-    this.config.supportEmail = process.env.SUPPORT_EMAIL
-    this.config.supportEmailPw = process.env.SUPPORT_EMAIL_PW
+    this.#config.nodeEnv = process.env.NODE_ENV
+    this.#config.port = process.env.PORT
+    this.#config.apiHost = process.env.API_HOST || 'http://localhost:3030'
+    this.#config.mongoUri = process.env.MONGO_URI
+    this.#config.logLevel = process.env.LOG_LEVEL
+    this.#config.pwSecret = process.env.PW_SECRET
+    this.#config.redisUri = process.env.REDIS_URI
+    this.#config.redisPort = process.env.REDIS_PORT
+    this.#config.redisHost = process.env.REDIS_HOST
+    this.#config.redisPass = process.env.REDIS_PASSWORD
+    this.#config.isTestEnv = process.env.NODE_ENV?.includes('test').toString()
+    this.#config.redisDB = process.env.REDIS_DB
+    this.#config.atExp = process.env.AT_EXPIRE
+    this.#config.rtExp = process.env.RT_EXPIRE
+    this.#config.atSecret = process.env.JWT_SECRET
+    this.#config.rtSecret = process.env.JWT_REFRESH_SECRET
+    this.#config.supportEmail = process.env.SUPPORT_EMAIL
+    this.#config.supportEmailPw = process.env.SUPPORT_EMAIL_PW
   }
 
   get(key: keyof EnvConfigInterface): string {
-    return this.config[key]!
+    return this.#config[key]!
   }
 }
 

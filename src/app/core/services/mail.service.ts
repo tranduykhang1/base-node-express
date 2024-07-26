@@ -6,10 +6,10 @@ import envConfig from '../../../config/env.config'
 import { SendMailDto } from '../dto/mail.dto'
 
 export class MailService {
-  private transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo>
+  #transporter: nodemailer.Transporter<SMTPTransport.SentMessageInfo>
 
   constructor() {
-    this.transporter = nodemailer.createTransport({
+    this.#transporter = nodemailer.createTransport({
       host: 'smtp.gmail.com',
       port: 587,
       secure: false,
@@ -24,7 +24,7 @@ export class MailService {
   async sendMail(mailOptions: SendMailDto) {
     try {
       mailOptions.from = 'tranduykhang1999@gmail.com'
-      return await this.transporter.sendMail(mailOptions)
+      return await this.#transporter.sendMail(mailOptions)
     } catch (error) {
       console.log(error)
     }

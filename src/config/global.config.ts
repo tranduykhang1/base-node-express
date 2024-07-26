@@ -30,7 +30,7 @@ const setupMiddlewareRouters = (app: Application, routes: Route[] | undefined): 
       .forEach((route) => {
         const routeModule = require(route.file)
         app.use(route.path, routeModule.router)
-        log.info(`ROUTE:::V${route.version}:::${route.file} will be public access via ${route.path}`)
+        log.info(`🔀 ROUTE:::V${route.version}:::${route.file} will be public access via ${route.path}`)
         app.use(route.path, errorHandlerMiddleware)
       })
   }
