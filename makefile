@@ -1,4 +1,4 @@
-.PHONY: help lint up down build api-logs unit e2e install mongo-init
+.PHONY: help lint up down build api-logs test-unit test-e2e install mongo-init
 
 GREEN := \033[0;32m
 NC := \033[0m 
@@ -10,8 +10,8 @@ help:
 	@echo "$(GREEN)  down        $(NC)- (Docker) Stop all services"
 	@echo "$(GREEN)  build       $(NC)- (Docker) Build and start all services in detached mode"
 	@echo "$(GREEN)  api-logs    $(NC)- (Docker) Tail logs for the demo_api container"
-	@echo "$(GREEN)  unit        $(NC)- Run unit tests"
-	@echo "$(GREEN)  e2e         $(NC)- Run end-to-end tests"
+	@echo "$(GREEN)  test-unit   $(NC)- Run unit tests"
+	@echo "$(GREEN)  test-e2e    $(NC)- Run end-to-end tests"
 	@echo "$(GREEN)  install     $(NC)- Install dependencies inside the api container"
 	@echo "$(GREEN)  mongo-init  $(NC)- Initialize MongoDB using the setup script"
 
@@ -30,10 +30,10 @@ build:
 api-logs:
 	docker logs demo_api -f --tail 10000
 
-unit:
+test-unit:
 	pnpm test
 
-e2e:
+test-e2e:
 	pnpm test:e2e
 
 install:

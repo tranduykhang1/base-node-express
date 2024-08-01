@@ -6,9 +6,9 @@ import { User } from '../../app/core/entities/user.entity'
 import { authServices } from '../../app/core/services/auth.service'
 import { redisServices } from '../../app/core/services/redis.service'
 import envConfig from '../../config/env.config'
+import { BaseHttpError } from '../base/base.error'
 import { REDIS_KEY } from '../enums/redis.enum'
 import { USER_ROLE } from '../enums/user.enum'
-import { BaseHttpError } from '../base/base.error'
 import { BaseValidator } from '../errors/validator.error'
 import { LoginResponse } from '../responses/auth.response'
 
@@ -25,6 +25,10 @@ class AuthMiddleware {
 
       if (decodedUser) {
         const tokens = await redisServices.get<LoginResponse>(REDIS_KEY.auth + decodedUser._id!)
+
+        if (tokens?.ip !== req?.ip) {
+          return next(new BaseHttpError(StatusCodes.CONFLICT, 'login on another device!'))
+        }
 
         if (tokens && tokens.at === providedToken) {
           httpContext.set('user', decodedUser)

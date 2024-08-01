@@ -30,7 +30,7 @@ class AuthControllers extends BaseController {
     try {
       await new BaseValidator<LoginDto>().validate(req.body, LoginDto, next)
 
-      const data = await authServices.login(req.body)
+      const data = await authServices.login(req.body, req.ip)
 
       return super.send(res, {
         data,

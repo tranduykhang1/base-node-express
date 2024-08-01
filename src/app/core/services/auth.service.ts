@@ -45,7 +45,7 @@ class AuthServices {
     }
   }
 
-  async login(dto: LoginDto): Promise<Optional<LoginResponse>> {
+  async login(dto: LoginDto, ip?: string): Promise<Optional<LoginResponse>> {
     const user = await userServices.findOne({ email: dto.email })
     if (!user) {
       throw new BaseHttpError(StatusCodes.BAD_REQUEST, 'wrong credentials!')
@@ -60,7 +60,7 @@ class AuthServices {
 
     await Promise.all([
       userServices.update({ _id: user._id }, { lastLogin: new Date() }),
-      redisServices.set<LoginResponse>(REDIS_KEY.auth + user._id, { at, rt }, REDIS_TTL['7d'])
+      redisServices.set<LoginResponse>(REDIS_KEY.auth + user._id, { at, rt, ip }, REDIS_TTL['7d'])
     ])
 
     return { at, rt }

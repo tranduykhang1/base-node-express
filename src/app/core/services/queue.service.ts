@@ -3,6 +3,7 @@ import { JOB_NAME, QUEUE_NAME } from '../../../common/enums/queue.enum'
 import { AppLogger } from '../../../config/log.config'
 import { redisServices } from './redis.service'
 import { mailService } from './mail.service'
+import envConfig from '../../../config/env.config'
 
 class QueueService {
   #queue: Queue
@@ -31,7 +32,9 @@ class QueueService {
   }
 
   async addJob<T>(name: JOB_NAME, data: T, opts?: object) {
-    await this.#queue.add(name, data, opts)
+    if (!envConfig.get('nodeEnv').includes('test')) {
+      await this.#queue.add(name, data, opts)
+    }
   }
 
   private async processJob(job: Job) {
