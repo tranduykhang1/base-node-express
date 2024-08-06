@@ -11,7 +11,10 @@ export class ClassUtil {
     return Array.from(properties)
   }
 
-  autoBind<T>(self: any, { include, exclude }: { include?: string[] | RegExp[]; exclude?: string[] | RegExp[] } = {}): T {
+  autoBind<T>(
+    self: any,
+    { include, exclude }: { include?: string[] | RegExp[]; exclude?: string[] | RegExp[] } = {}
+  ): T {
     const filter = (key: string) => {
       const match = (pattern: string | RegExp) => (typeof pattern === 'string' ? key === pattern : pattern.test(key))
 
