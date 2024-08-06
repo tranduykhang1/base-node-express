@@ -28,8 +28,7 @@ class EnvConfig {
   }
 
   init() {
-    this.#config.nodeEnv = process.env.NODE_ENV,
-    this.#config.port = process.env.PORT
+    ;(this.#config.nodeEnv = process.env.NODE_ENV), (this.#config.port = process.env.PORT)
     this.#config.apiHost = process.env.API_HOST || 'http://localhost:3030'
     this.#config.mongoUri = process.env.MONGO_URI
     this.#config.logLevel = process.env.LOG_LEVEL

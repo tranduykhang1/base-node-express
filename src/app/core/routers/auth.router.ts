@@ -58,7 +58,7 @@ router.post('/register', authControllers.register)
  *   "password": "123123123"
  * }
  */
-router.post('/login', authControllers.login.bind(authControllers))
+router.post('/login', authControllers.login)
 
 /**
  * POST /api/v1/auth/refresh-token
@@ -67,6 +67,6 @@ router.post('/login', authControllers.login.bind(authControllers))
  * @param {RefreshTokenDto} request.body.required - Refresh Token DTO
  * @return {string} 200 - success response - application/json
  */
-router.post('/refresh-token', authMiddleware.refreshToken, authControllers.refreshToken.bind(authControllers))
+router.post('/refresh-token', authMiddleware.refreshToken, authControllers.refreshToken)
 
 exports.router = router

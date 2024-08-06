@@ -2,18 +2,23 @@ import { NextFunction, Request, Response } from 'express'
 import { StatusCodes } from 'http-status-codes'
 import { BaseController } from '../../../common/base/controller.base'
 import { BaseValidator } from '../../../common/errors/validator.error'
+import { classUtil } from '../../../utils/class.util'
 import { LoginDto, RegisterDto } from '../dto/auth.dto'
 import { authServices } from '../services/auth.service'
 import { userServices } from '../services/user.service'
 
 class AuthControllers extends BaseController {
+  constructor() {
+    super()
+    classUtil.autoBind(this)
+  }
   async register(req: Request, res: Response, next: NextFunction) {
     try {
       await new BaseValidator<RegisterDto>().validate(req.body, RegisterDto, next)
 
       const data = await authServices.register(req.body)
 
-      return super.send(
+      return this.send(
         res,
         {
           data,
@@ -32,7 +37,7 @@ class AuthControllers extends BaseController {
 
       const data = await authServices.login(req.body, req.ip)
 
-      return super.send(res, {
+      return this.send(res, {
         data,
         message: 'success'
       })
@@ -50,7 +55,7 @@ class AuthControllers extends BaseController {
       if (user) {
         const data = await authServices.refreshToken(user)
 
-        return super.send(res, {
+        return this.send(res, {
           data,
           message: 'success'
         })

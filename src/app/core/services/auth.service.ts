@@ -13,11 +13,14 @@ import QueueService from './queue.service'
 import { redisServices } from './redis.service'
 import { userServices } from './user.service'
 import { registrationTemplate } from '../../../common/templates/registration.template'
+import { classUtil } from '../../../utils/class.util'
 
 class AuthServices {
   #queue: QueueService
   constructor() {
     this.#queue = new QueueService(QUEUE_NAME.AUTH)
+
+    classUtil.autoBind(this)
   }
   signToken(payload: Partial<User>, expiresIn: string, secret = envConfig.get('atSecret')): string {
     const token = jwt.sign(payload, secret, {

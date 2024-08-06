@@ -2,10 +2,12 @@ import { StatusCodes } from 'http-status-codes'
 import { BaseHttpError } from '../../../common/base/base.error'
 import { BaseServices } from '../../../common/base/service.base'
 import { User, UserEntity } from '../entities/user.entity'
+import { classUtil } from '../../../utils/class.util'
 
 class UserServices extends BaseServices<User> {
   constructor() {
     super(UserEntity)
+    classUtil.autoBind(this)
   }
 
   async checkDuplicateUser(email: string): Promise<void> {

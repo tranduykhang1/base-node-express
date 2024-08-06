@@ -13,7 +13,8 @@ export default [
     rules: {
       semi: ['error', 'never'],
       '@typescript-eslint/semi': 'off',
-      'no-unexpected-multiline': 'error'
+      'no-unexpected-multiline': 'error',
+      '@typescript-eslint/no-explicit-any': 'warn'
     }
   }
 ]
