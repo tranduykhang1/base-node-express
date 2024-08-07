@@ -7,6 +7,7 @@ import morgan from 'morgan'
 import { firebaseLib } from '../app/core/services/firebase-lib.service'
 import { redisServices } from '../app/core/services/redis.service'
 import { mongoSetup } from '../app/db/mongo.db'
+import { rateLimiter } from '../common/middlewares/rateLimiter'
 import { setupMiddlewareRouters } from './global.config'
 import { ServerConfig } from './server.config'
 import swaggerConfig from './swagger.config'
@@ -23,7 +24,9 @@ export class ExpressConfig {
 
   private configure() {
     if (this.#serverConfig.isConfigured) {
+
       this.app.use(express.urlencoded({ extended: true }))
+
       this.app.use(json())
 
       this.app.use(helmet())
@@ -32,6 +35,9 @@ export class ExpressConfig {
       this.app.use(httpContext.middleware)
 
       this.app.use(cors(this.#serverConfig.cors))
+
+      this.app.use(rateLimiter)
+
       this.app.set('trust proxy', true)
 
       mongoSetup.connect()

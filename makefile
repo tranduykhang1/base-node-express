@@ -30,6 +30,11 @@ build:
 api-logs:
 	docker logs demo_api -f --tail 10000
 
+api-restart:
+	docker restart demo_api
+
+
+
 test-unit:
 	pnpm test
 
