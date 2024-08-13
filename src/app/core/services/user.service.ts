@@ -1,23 +1,30 @@
 import { StatusCodes } from 'http-status-codes'
+import { FilterQuery } from 'mongoose'
 import { BaseHttpError } from '../../../common/base/base.error'
-import { BaseServices } from '../../../common/base/service.base'
-import { User, UserEntity } from '../entities/user.entity'
+import { BaseService } from '../../../common/base/service.base'
 import { classUtil } from '../../../utils/class.util'
+import { User } from '../entities/user.entity'
+import { userRepository } from '../repositories/user.repository'
 
-class UserServices extends BaseServices<User> {
+class UserServices extends BaseService<User> {
   constructor() {
-    super(UserEntity)
+    super(userRepository)
     classUtil.autoBind(this)
   }
 
   async checkDuplicateUser(email: string): Promise<void> {
-    return this.withSession(async (session) => {
-      await this.update({ email }, { lastName: 'Updated' }, session)
-      const user = await this.findOne({ email })
-      if (user) {
-        throw new BaseHttpError(StatusCodes.CONFLICT, 'duplicate email!')
-      }
-    })
+    const user = await this.findOne({ email })
+    if (user) {
+      throw new BaseHttpError(StatusCodes.CONFLICT, 'duplicate email!')
+    }
+  }
+
+  async findAndCount(
+    filter: FilterQuery<User>,
+    paginate: { offset: number; limit: number }
+  ): Promise<{ items: User[]; total: number }> {
+    const { offset, limit } = paginate
+    return await userRepository.findAndCount(filter, { offset, limit })
   }
 }
 

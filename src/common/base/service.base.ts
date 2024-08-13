@@ -1,176 +1,125 @@
-import { mongoose } from '@typegoose/typegoose'
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { StatusCodes } from 'http-status-codes'
-import { FilterQuery, Model } from 'mongoose'
-import { mongoSetup } from '../../app/db/mongo.db'
-import envConfig from '../../config/env.config'
+import { FilterQuery } from 'mongoose'
 import { AppLogger } from '../../config/log.config'
-import { SORT_BY, SORT_ORDER } from '../enums/pagination.enum'
 import { Nullable } from '../types/common.type'
 import { BaseHttpError } from './base.error'
+import { BaseRepository } from './repository.base'
 
-export class BaseServices<T> {
-  model: Model<T>
-  log: AppLogger = new AppLogger(BaseServices.name)
+export class BaseService<T> {
+  private readonly modelName: string
+  private readonly serviceLogger = new AppLogger(BaseService.name)
 
-  constructor(model: Model<T>) {
-    if (envConfig.get('nodeEnv') !== 'test') {
-      this.model = model
-    }
-
-    //replace for the test model
-    this.model = model
+  constructor(private readonly repository: BaseRepository<T>) {
+    this.repository = repository
   }
 
-  async create(input: Partial<T>, session?: mongoose.ClientSession, createdBy = ''): Promise<T> {
+  async create(input: FilterQuery<T>, createdBy = ''): Promise<T> {
     try {
       const createInput = { ...input, createdBy }
-      const createdData = await this.model.create([createInput], { session })
-      return createdData[0]
+      const createdData = await this.repository.create(createInput)
+      if (!createdData) this.handleServiceError(`CREATE_FAIL_FOR_${this.modelName.toLowerCase()}`, 'create')
+      return createdData
     } catch (err) {
       throw this.handleServiceError(err, 'Create')
     }
   }
 
-  async createMany(input: Partial<T[]>, session?: mongoose.ClientSession, createdBy = ''): Promise<void> {
+  async createMany(inputs: FilterQuery<T>[], createdBy = ''): Promise<void> {
     try {
-      const createInput = input.map((i) => {
-        return {
-          ...i,
-          createdBy
-        }
-      })
-      await this.model.insertMany(createInput, { session })
+      if (createdBy) {
+        inputs = inputs.map((input) => ({ ...input, createdBy }))
+      }
+      await this.repository.createMany(inputs)
       return
     } catch (err) {
-      throw this.handleServiceError(err, 'Create many')
+      throw this.handleServiceError(err, 'Create')
     }
   }
 
-  async findOne(filter: FilterQuery<T>, throwErr = false): Promise<Nullable<T>> {
+  async findOne(filter: FilterQuery<T>): Promise<Nullable<T>> {
     try {
-      const data = await this.model.findOne(filter)
-      if (throwErr && !data) {
-        throw this.handleServiceError(Error(`${this.model.name} not found`), 'findOne')
-      }
-      return data
-    } catch (error) {
-      throw this.handleServiceError(error, 'findOne')
+      const queryFilter: FilterQuery<T> = { ...filter }
+
+      const result = await this.repository.findOne(queryFilter)
+
+      return result ?? null
+    } catch (err) {
+      throw this.handleServiceError(err, `FindOne ${this.modelName}`)
     }
   }
 
-  async update(
-    filter: FilterQuery<T>,
-    input: Partial<Record<keyof T, unknown>>,
-    session?: mongoose.ClientSession,
-    strictMode = false,
-    updatedBy = ''
-  ): Promise<Nullable<T>> {
+  async findOneUseStrict(filter: FilterQuery<T>): Promise<T> {
     try {
-      const updateInput = { ...input, updatedBy }
-      const result = await this.model.findOneAndUpdate(filter, { $set: updateInput }, { new: true, session })
-      if (strictMode) {
-        if (!result) throw this.handleServiceError(Error(`${this.model.name} not found`), `Update`)
-      }
+      const queryFilter: FilterQuery<T> = { ...filter }
+
+      const result = await this.repository.findOne(queryFilter)
+
+      if (!result) throw new BaseHttpError(StatusCodes.BAD_REQUEST, `${this.modelName} not found`)
+
       return result
     } catch (err) {
-      throw this.handleServiceError(err, `Update ${this.model.name}`)
+      throw this.handleServiceError(err, `FindOne ${this.modelName}`)
     }
   }
 
-  async softDelete(filter: FilterQuery<T>, deletedBy = '', session?: mongoose.ClientSession): Promise<void> {
+  async findLastOne(filter: FilterQuery<T>): Promise<Nullable<T>> {
+    try {
+      const result = await this.repository.findLastOne(filter)
+
+      return result ?? null
+    } catch (err) {
+      throw this.handleServiceError(err, `FindLastOne ${this.modelName}`)
+    }
+  }
+
+  async update(filter: FilterQuery<T>, input: Partial<Record<keyof T, unknown>>, updatedBy = ''): Promise<Nullable<T>> {
+    try {
+      const updateInput = { ...input, updatedBy }
+      const result = await this.repository.update(filter, updateInput)
+      if (!result) throw this.handleServiceError({}, `${this.modelName} not found`)
+      return result
+    } catch (err) {
+      throw this.handleServiceError(err, `Update ${this.modelName}`)
+    }
+  }
+
+  async softDelete(filter: Record<keyof T, any> | any, deletedBy = ''): Promise<void> {
     try {
       const [foundDocument] = await Promise.all([
-        this.model.findOne(filter),
-        this.model.updateMany(
-          filter,
-          {
-            $set: { deletedAt: new Date(), isDeleted: true, deletedBy }
-          },
-          { new: true, session }
-        )
+        this.repository.findOne(filter),
+        this.repository.updateMany(filter, {
+          deletedAt: new Date(),
+          isDeleted: true,
+          deletedBy
+        })
       ])
-      if (!foundDocument) throw this.handleServiceError(Error(`${this.model.name} not found`), `SoftDelete`)
+      if (!foundDocument) this.handleServiceError(`${this.modelName} not found`, `SoftDelete ${this.modelName}`)
     } catch (err) {
-      this.handleServiceError(err, `SoftDelete ${this.model.name}`)
+      this.handleServiceError(err, `SoftDelete ${this.modelName}`)
     }
   }
 
-  async delete(filter: FilterQuery<T>, session?: mongoose.ClientSession): Promise<void> {
+  async delete(filter: Record<keyof T, any> | any): Promise<void> {
     try {
-      await this.model.deleteMany(filter, { session })
+      await this.repository.delete(filter)
       return
     } catch (err) {
-      throw this.handleServiceError(err, `Delete`)
+      throw this.handleServiceError(err, `Delete ${this.modelName}`)
     }
   }
 
-  async aggregateCount(filter: FilterQuery<T>, pipe = []): Promise<number> {
+  async count(filter: FilterQuery<T>): Promise<number> {
     try {
-      const result = await this.model.aggregate([{ $match: filter }, ...pipe, { $count: 'count' }])
-      return result.length > 0 ? result[0].count : 0
+      return await this.repository.count({ ...filter })
     } catch (err) {
-      throw this.handleServiceError(err, 'AggregateCount')
-    }
-  }
-
-  async findAndCount<M = T>(
-    filter: FilterQuery<T>,
-    paginate: {
-      sortField?: keyof T
-      sortOrder?: SORT_ORDER
-      offset: number
-      limit: 10
-    },
-    /* eslint-disable  @typescript-eslint/no-explicit-any */
-    pipes = [] as any,
-    secondSortField?: SORT_ORDER
-  ): Promise<{ items: M[]; total: number }> {
-    try {
-      const { sortField = SORT_BY.createdAt, sortOrder = SORT_ORDER.DESC, offset = 0, limit = 10 } = paginate
-      const sortOrderNumber = sortOrder === SORT_ORDER.DESC ? -1 : 1
-      const secondSort = secondSortField || '_id'
-
-      const [items, total] = await Promise.all([
-        this.model.aggregate([
-          { $match: filter },
-          ...pipes,
-          { $sort: { [sortField]: sortOrderNumber, [secondSort]: -1 } },
-          { $limit: offset + limit },
-          { $skip: offset },
-          {
-            $project: {
-              password: 0,
-              key: 0
-            }
-          }
-        ]),
-        this.aggregateCount(filter, pipes)
-      ])
-
-      return { total, items }
-    } catch (err) {
-      throw this.handleServiceError(err, `Query`)
+      throw this.handleServiceError(err, `Count ${this.modelName}`)
     }
   }
 
   private handleServiceError(err: any, operation: string): void {
-    this.log.error(`Error occurred during ${operation} operation for ${this.model.name}:`)
-    this.log.error(err)
+    this.serviceLogger.error(`Error occurred during ${operation} operation for ${this.modelName}:`)
+    this.serviceLogger.error(err)
     throw new BaseHttpError(StatusCodes.BAD_REQUEST, err)
-  }
-
-  async withSession<T = void>(fn: (session: mongoose.ClientSession) => Promise<T>): Promise<T> {
-    const session = await mongoSetup.startSession()
-    try {
-      await session.startTransaction()
-      const result = await fn(session)
-      await session.commitTransaction()
-      return result
-    } catch (error) {
-      await session.abortTransaction()
-      throw error
-    } finally {
-      await session.endSession()
-    }
   }
 }

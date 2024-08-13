@@ -24,7 +24,6 @@ export class ExpressConfig {
 
   private configure() {
     if (this.#serverConfig.isConfigured) {
-
       this.app.use(express.urlencoded({ extended: true }))
 
       this.app.use(json())
@@ -38,7 +37,7 @@ export class ExpressConfig {
 
       this.app.use(rateLimiter)
 
-      this.app.set('trust proxy', true)
+      // this.app.set('trust proxy', true)
 
       mongoSetup.connect()
       redisServices.connect()

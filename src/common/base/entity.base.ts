@@ -6,7 +6,7 @@ import { nanoid } from 'nanoid'
     timestamps: true
   }
 })
-export class BaseEntity {
+export abstract class BaseEntity {
   @prop({ type: String, default: nanoid() })
   _id!: string
 
