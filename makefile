@@ -32,10 +32,10 @@ build:
 api-logs:
 	docker logs demo_api -f --tail 10000
 
-test-unit:
+unit-test:
 	pnpm test
 
-test-e2e:
+e2e-test:
 	pnpm test:e2e
 
 install:
