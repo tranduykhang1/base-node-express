@@ -38,6 +38,9 @@ unit-test:
 e2e-test:
 	pnpm test:e2e
 
+architect-test:
+	pnpm test:architect
+
 install:
 	docker compose exec api pnpm i
 

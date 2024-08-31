@@ -1,3 +1,4 @@
 pnpm run lint
 pnpm run prettier:fix
 pnpm build
+pnpm test:architect
